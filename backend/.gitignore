@@ -1,0 +1,29 @@
+# Django
+*.pyc
+__pycache__/
+db.sqlite3
+*.sqlite3
+/media/
+/staticfiles/
+
+# Environment
+.env
+.venv/
+env/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+*.egg-info/
+dist/
+build/

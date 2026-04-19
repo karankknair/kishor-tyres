@@ -1,0 +1,45 @@
+# Render Deployment Configuration
+# This file tells Render how to build and deploy your application
+
+services:
+  # Django Backend
+  - type: web
+    name: kishor-tyres-backend
+    runtime: python
+    plan: free
+    buildCommand: "cd backend && pip install -r requirements.txt && python manage.py collectstatic --noinput"
+    startCommand: "cd backend && gunicorn kishor_tyres.wsgi:application --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: kishor-tyres-db
+          property: connectionString
+      - key: FRONTEND_URL
+        value: https://kishor-tyres.vercel.app  # Update after Vercel deploy
+    disk:
+      name: media-storage
+      mountPath: /backend/media
+      sizeGB: 1
+
+  # Static Site for Media (optional - if you want to serve media files)
+  # - type: web
+  #   name: kishor-tyres-media
+  #   runtime: static
+  #   plan: free
+  #   staticPublishPath: ./backend/media
+  #   routes:
+ #     - type: rewrite
+  #       source: /media/*
+  #       destination: /media/$1
+
+databases:
+  - name: kishor-tyres-db
+    plan: free
+    databaseName: kishor_tyres
+    user: kishor_tyres
