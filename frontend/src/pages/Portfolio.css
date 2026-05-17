@@ -1,0 +1,186 @@
+.portfolio-page { min-height: 100vh; background: #f8fafc; }
+
+.breadcrumb-nav {
+  padding: 12px 40px;
+  background: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 14px;
+  color: #64748b;
+}
+.breadcrumb-nav a { color: #e63946; text-decoration: none; }
+
+.portfolio-hero {
+  background: linear-gradient(135deg, #1a1a2e 0%, #2c3e50 100%);
+  color: #fff;
+  padding: 60px 40px;
+  text-align: center;
+}
+.portfolio-hero h1 { font-size: 40px; margin-bottom: 10px; }
+.portfolio-hero p { font-size: 17px; opacity: 0.8; }
+
+.portfolio-container {
+  max-width: 1200px;
+  margin: 48px auto;
+  padding: 0 40px;
+}
+
+.category-filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+.filter-btn {
+  padding: 8px 20px;
+  border: 2px solid #e2e8f0;
+  background: #fff;
+  border-radius: 99px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #475569;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+.filter-btn:hover { border-color: #e63946; color: #e63946; }
+.filter-btn.active { background: #e63946; border-color: #e63946; color: #fff; }
+
+.loading-state { text-align: center; padding: 80px; color: #94a3b8; font-size: 18px; }
+
+.placeholder-notice {
+  background: #fef9c3;
+  border: 1px solid #fde68a;
+  color: #92400e;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.gallery-masonry {
+  columns: 3;
+  column-gap: 16px;
+}
+
+.gallery-card {
+  break-inside: avoid;
+  margin-bottom: 16px;
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #e2e8f0;
+}
+.gallery-card:hover .gallery-overlay { opacity: 1; }
+
+.gallery-card img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.placeholder-img {
+  width: 100%;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+}
+.gallery-card.span-wide .placeholder-img { height: 280px; }
+.placeholder-icon { font-size: 36px; opacity: 0.6; }
+
+.gallery-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 16px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.gallery-title { color: #fff; font-weight: 600; font-size: 14px; }
+.gallery-cat { color: rgba(255,255,255,0.7); font-size: 12px; text-transform: capitalize; margin-top: 2px; }
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.lightbox-content {
+  position: relative;
+  max-width: 800px;
+  width: 100%;
+  background: #1a1a2e;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.lightbox-content img { width: 100%; max-height: 500px; object-fit: cover; display: block; }
+.lightbox-placeholder {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #fff;
+  font-size: 48px;
+}
+.lightbox-placeholder p { font-size: 16px; margin: 0; }
+.lightbox-info { padding: 20px; color: #fff; }
+.lightbox-info h3 { margin: 0 0 6px; font-size: 20px; }
+.lightbox-cat { color: #94a3b8; font-size: 13px; text-transform: capitalize; }
+.lightbox-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lightbox-close:hover { background: #e63946; }
+
+/* CTA */
+.portfolio-cta {
+  background: #1a1a2e;
+  padding: 60px 40px;
+  text-align: center;
+  color: #fff;
+}
+.portfolio-cta-inner h3 { font-size: 26px; margin-bottom: 10px; }
+.portfolio-cta-inner p { opacity: 0.75; margin-bottom: 28px; }
+.btn-primary {
+  display: inline-block;
+  padding: 12px 28px;
+  background: #e63946;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+}
+.btn-primary:hover { background: #c1121f; }
+
+@media (max-width: 768px) {
+  .portfolio-container { padding: 0 20px; }
+  .gallery-masonry { columns: 2; }
+}
+@media (max-width: 480px) {
+  .gallery-masonry { columns: 1; }
+}

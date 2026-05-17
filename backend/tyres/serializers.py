@@ -1,10 +1,32 @@
 from rest_framework import serializers
-from .models import TyreSize, Customer, RemouldingJob, Stock, CompanyInfo, Testimonial, GalleryImage, TyreNumber
+from .models import (
+    TyreSize, Customer, RemouldingJob, Stock, CompanyInfo,
+    Testimonial, GalleryImage, TyreNumber, RateCard,
+    REMOULDING_SUB_TYPE_MAP,
+)
 
 
 class TyreSizeSerializer(serializers.ModelSerializer):
+    vehicle_category_display = serializers.CharField(
+        source='get_vehicle_category_display', read_only=True
+    )
+
     class Meta:
         model = TyreSize
+        fields = '__all__'
+
+
+class RateCardSerializer(serializers.ModelSerializer):
+    tyre_size_detail = TyreSizeSerializer(source='tyre_size', read_only=True)
+    remoulding_type_display = serializers.CharField(
+        source='get_remoulding_type_display', read_only=True
+    )
+    remoulding_sub_type_display = serializers.CharField(
+        source='get_remoulding_sub_type_display', read_only=True
+    )
+
+    class Meta:
+        model = RateCard
         fields = '__all__'
 
 
@@ -39,8 +61,15 @@ class RemouldingJobSerializer(serializers.ModelSerializer):
     tyre_numbers = TyreNumberSerializer(many=True, read_only=True)
     tyre_numbers_data = serializers.ListField(
         child=serializers.CharField(), write_only=True, required=False,
-        help_text="List of tyre numbers to create"
+        help_text='List of tyre serial numbers to create'
     )
+    remoulding_type_display = serializers.CharField(
+        source='get_remoulding_type_display', read_only=True
+    )
+    remoulding_sub_type_display = serializers.CharField(
+        source='get_remoulding_sub_type_display', read_only=True
+    )
+    is_overdue = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = RemouldingJob
@@ -49,15 +78,16 @@ class RemouldingJobSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         tyre_numbers_data = validated_data.pop('tyre_numbers_data', [])
         job = super().create(validated_data)
-
-        # Create tyre numbers
+        seen = set()
         for tyre_number in tyre_numbers_data:
-            TyreNumber.objects.create(
-                remoulding_job=job,
-                tyre_number=tyre_number,
-                status='received'
-            )
-
+            stripped = tyre_number.strip()
+            if stripped and stripped not in seen:
+                seen.add(stripped)
+                TyreNumber.objects.get_or_create(
+                    remoulding_job=job,
+                    tyre_number=stripped,
+                    defaults={'status': 'received'},
+                )
         return job
 
 
@@ -65,12 +95,19 @@ class RemouldingJobListSerializer(serializers.ModelSerializer):
     customer_name = serializers.CharField(source='customer.name', read_only=True)
     customer_phone = serializers.CharField(source='customer.phone', read_only=True)
     tyre_size_name = serializers.CharField(source='tyre_size.size', read_only=True)
+    remoulding_type_display = serializers.CharField(
+        source='get_remoulding_type_display', read_only=True
+    )
+    is_overdue = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = RemouldingJob
-        fields = ['id', 'job_number', 'customer_name', 'customer_phone',
-                  'tyre_size_name', 'quantity', 'date_entered', 'expected_delivery',
-                  'status', 'total_cost']
+        fields = [
+            'id', 'job_number', 'customer_name', 'customer_phone',
+            'tyre_size_name', 'quantity', 'tyre_brand',
+            'remoulding_type', 'remoulding_type_display',
+            'in_date', 'expected_delivery', 'status', 'amount', 'is_overdue',
+        ]
 
 
 class StockSerializer(serializers.ModelSerializer):

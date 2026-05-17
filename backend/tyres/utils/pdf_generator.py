@@ -70,7 +70,7 @@ def generate_invoice(job, output_path=None):
     # Invoice Details Table
     invoice_data = [
         ['Invoice Number:', f"INV-{job.job_number}"],
-        ['Date:', job.date_entered.strftime('%d-%m-%Y')],
+        ['Date:', job.in_date.strftime('%d-%m-%Y')],
         ['Job Number:', job.job_number],
         ['Expected Delivery:', job.expected_delivery.strftime('%d-%m-%Y')],
     ]
@@ -122,8 +122,8 @@ def generate_invoice(job, output_path=None):
         ['Description', 'Quantity', 'Unit Price', 'Total'],
         [f"Tyre Remoulding - Size {job.tyre_size.size}",
          str(job.quantity),
-         f"Rs. {job.tyre_size.price:,.2f}",
-         f"Rs. {job.total_cost:,.2f}"],
+         f"Rs. {(job.amount / job.quantity):,.2f}" if job.quantity else "—",
+         f"Rs. {job.amount:,.2f}"],
     ]
 
     tyre_table = Table(tyre_data, colWidths=[2.5*inch, 1*inch, 1*inch, 1.5*inch])
@@ -144,7 +144,7 @@ def generate_invoice(job, output_path=None):
 
     # Total
     total_data = [
-        ['', '', 'Total Amount:', f"Rs. {job.total_cost:,.2f}"],
+        ['', '', 'Total Amount:', f"Rs. {job.amount:,.2f}"],
     ]
 
     total_table = Table(total_data, colWidths=[2.5*inch, 1*inch, 1*inch, 1.5*inch])

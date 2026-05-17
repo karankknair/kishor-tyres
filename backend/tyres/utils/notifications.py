@@ -20,7 +20,7 @@ Please find attached your invoice for the following job:
 - Tyre Size: {job.tyre_size.size}
 - Quantity: {job.quantity}
 - Expected Delivery: {job.expected_delivery}
-- Total Amount: Rs. {job.total_cost:,.2f}
+- Total Amount: Rs. {job.amount:,.2f}
 
 We look forward to serving you again.
 
@@ -62,7 +62,7 @@ Your tyre remoulding job has been registered:
 *Tyre Size:* {job.tyre_size.size}
 *Quantity:* {job.quantity}
 *Expected Delivery:* {job.expected_delivery}
-*Total Amount:* Rs. {job.total_cost:,.2f}
+*Total Amount:* Rs. {job.amount:,.2f}
 
 We'll notify you once your tyres are ready for pickup.
 

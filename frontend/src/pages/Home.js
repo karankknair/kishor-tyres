@@ -70,9 +70,10 @@ const Header = ({ user }) => {
 
         <nav className={`main-nav ${isMenuOpen ? 'open' : ''}`}>
           <a href="#about">About</a>
-          <a href="#tyres">Tyres</a>
-          <a href="#gallery">Gallery</a>
-          <a href="#testimonials">Testimonials</a>
+          <Link to="/services">Services</Link>
+          <Link to="/tyre-sizes">Tyre Sizes</Link>
+          <Link to="/portfolio">Portfolio</Link>
+          <Link to="/feedback">Feedback</Link>
           <a href="#contact">Contact</a>
         </nav>
 

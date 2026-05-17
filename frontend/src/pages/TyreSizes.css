@@ -1,0 +1,178 @@
+.tyre-sizes-page { min-height: 100vh; background: #f8fafc; }
+
+.breadcrumb-nav {
+  padding: 12px 40px;
+  background: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 14px;
+  color: #64748b;
+}
+.breadcrumb-nav a { color: #e63946; text-decoration: none; }
+
+.sizes-hero {
+  background: linear-gradient(135deg, #1a1a2e 0%, #2c3e50 100%);
+  color: #fff;
+  padding: 60px 40px;
+  text-align: center;
+}
+.sizes-hero h1 { font-size: 40px; margin-bottom: 10px; }
+.sizes-hero p { font-size: 17px; opacity: 0.8; }
+
+.loading-state {
+  text-align: center;
+  padding: 80px;
+  color: #64748b;
+  font-size: 18px;
+}
+
+.sizes-layout {
+  display: flex;
+  max-width: 1100px;
+  margin: 48px auto;
+  padding: 0 40px;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+/* Sidebar */
+.category-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  position: sticky;
+  top: 20px;
+}
+.category-sidebar h3 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+  margin-bottom: 14px;
+}
+
+.category-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 14px;
+  color: #334155;
+  margin-bottom: 4px;
+  transition: background 0.15s;
+}
+.category-btn:hover { background: #f1f5f9; }
+.category-btn.active { background: #fef2f2; color: #e63946; font-weight: 600; }
+.cat-icon { font-size: 18px; }
+.cat-name { flex: 1; }
+.cat-count {
+  background: #e2e8f0;
+  color: #475569;
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 99px;
+  font-weight: 600;
+}
+.category-btn.active .cat-count { background: #fecaca; color: #e63946; }
+
+/* Main content */
+.sizes-content { flex: 1; }
+
+.sizes-content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.sizes-content-header h2 { font-size: 24px; color: #1a1a2e; margin: 0; }
+
+.size-search {
+  padding: 8px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  width: 200px;
+}
+.size-search:focus { border-color: #e63946; }
+
+.sizes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.size-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px 16px;
+  text-align: center;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  border: 1px solid #e2e8f0;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+.size-card:hover { box-shadow: 0 4px 16px rgba(230,57,70,0.15); border-color: #e63946; }
+
+.size-display { font-size: 16px; font-weight: 700; color: #1a1a2e; }
+.size-description { font-size: 12px; color: #64748b; margin: 6px 0 0; }
+.size-status {
+  margin-top: 10px;
+  display: inline-block;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-weight: 600;
+}
+.size-status.active { background: #dcfce7; color: #16a34a; }
+
+.no-results { color: #94a3b8; font-style: italic; }
+
+.sizes-note {
+  font-size: 13px;
+  color: #64748b;
+  padding: 14px 16px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sizes-note a { color: #e63946; font-weight: 600; text-decoration: none; }
+
+/* CTA */
+.sizes-cta {
+  background: #1a1a2e;
+  padding: 64px 40px;
+  text-align: center;
+  color: #fff;
+}
+.sizes-cta-inner h3 { font-size: 26px; margin-bottom: 10px; }
+.sizes-cta-inner p { opacity: 0.75; margin-bottom: 28px; }
+.btn-primary {
+  display: inline-block;
+  padding: 12px 28px;
+  background: #e63946;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+}
+.btn-primary:hover { background: #c1121f; }
+
+@media (max-width: 768px) {
+  .sizes-layout { flex-direction: column; padding: 0 20px; }
+  .category-sidebar { width: 100%; position: static; }
+  .sizes-content-header { flex-direction: column; align-items: flex-start; }
+  .size-search { width: 100%; }
+}
