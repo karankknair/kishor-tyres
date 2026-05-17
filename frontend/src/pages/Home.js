@@ -42,37 +42,64 @@ const useCounter = (target, active, duration = 1800) => {
 
 // ── SVG Tyre ──────────────────────────────────────────────────────────────────
 
-const TyreSVG = ({ className = '' }) => (
-  <svg className={className} viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="120" cy="120" r="116" fill="#111111" />
-    {Array.from({ length: 20 }, (_, i) => {
-      const a = (i * 18 - 8) * Math.PI / 180;
-      const b = (i * 18 + 8) * Math.PI / 180;
-      const r1 = 88, r2 = 114;
-      const pts = [
-        `${120 + r1 * Math.cos(a)},${120 + r1 * Math.sin(a)}`,
-        `${120 + r2 * Math.cos(a)},${120 + r2 * Math.sin(a)}`,
-        `${120 + r2 * Math.cos(b)},${120 + r2 * Math.sin(b)}`,
-        `${120 + r1 * Math.cos(b)},${120 + r1 * Math.sin(b)}`,
-      ].join(' ');
-      return <polygon key={i} points={pts} fill={i % 4 === 0 ? '#F5A623' : '#1E1E1E'} />;
-    })}
-    <circle cx="120" cy="120" r="82" fill="#0D0D0D" />
-    <circle cx="120" cy="120" r="72" fill="#1A1A1A" stroke="#F5A623" strokeWidth="2.5" />
-    {Array.from({ length: 5 }, (_, i) => {
-      const a = (i * 72 - 90) * Math.PI / 180;
-      return (
-        <line key={i}
-          x1={120 + 26 * Math.cos(a)} y1={120 + 26 * Math.sin(a)}
-          x2={120 + 68 * Math.cos(a)} y2={120 + 68 * Math.sin(a)}
-          stroke="#F5A623" strokeWidth="10" strokeLinecap="round" />
-      );
-    })}
-    <circle cx="120" cy="120" r="24" fill="#0D0D0D" stroke="#F5A623" strokeWidth="2.5" />
-    <circle cx="120" cy="120" r="11" fill="#F5A623" />
-    <circle cx="120" cy="120" r="4.5" fill="#0D0D0D" />
-  </svg>
-);
+const TyreSVG = ({ className = '' }) => {
+  const cx = 120, cy = 120;
+  // 18 angled tread lugs — offset inner/outer edge for a real lug tyre look
+  const lugs = Array.from({ length: 18 }, (_, i) => {
+    const base = (i * 20) * Math.PI / 180;
+    const skew = 4 * Math.PI / 180;
+    const r1 = 88, r2 = 112;
+    const wa = 7 * Math.PI / 180;
+    return [
+      `${cx + r1 * Math.cos(base - wa)},${cy + r1 * Math.sin(base - wa)}`,
+      `${cx + r2 * Math.cos(base - wa + skew)},${cy + r2 * Math.sin(base - wa + skew)}`,
+      `${cx + r2 * Math.cos(base + wa + skew)},${cy + r2 * Math.sin(base + wa + skew)}`,
+      `${cx + r1 * Math.cos(base + wa)},${cy + r1 * Math.sin(base + wa)}`,
+    ].join(' ');
+  });
+
+  return (
+    <svg className={className} viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Outer tyre body */}
+      <circle cx={cx} cy={cy} r="116" fill="#1A1A1A" />
+      {/* Tyre shoulder ring */}
+      <circle cx={cx} cy={cy} r="116" fill="none" stroke="#2A2A2A" strokeWidth="6" />
+      {/* Tread lugs — uniform dark, angled like real lugs */}
+      {lugs.map((pts, i) => (
+        <polygon key={i} points={pts} fill="#272727" stroke="#111" strokeWidth="0.8" />
+      ))}
+      {/* Sidewall */}
+      <circle cx={cx} cy={cy} r="83" fill="#111111" />
+      {/* Sidewall text ring (decorative) */}
+      <circle cx={cx} cy={cy} r="83" fill="none" stroke="#1E1E1E" strokeWidth="3" />
+      {/* Rim outer ring */}
+      <circle cx={cx} cy={cy} r="72" fill="#181818" stroke="#F5A623" strokeWidth="2.5" />
+      {/* Rim inner ring */}
+      <circle cx={cx} cy={cy} r="50" fill="none" stroke="#2A2A2A" strokeWidth="1" />
+      {/* 5 spokes — tapered with highlight */}
+      {Array.from({ length: 5 }, (_, i) => {
+        const a = (i * 72 - 90) * Math.PI / 180;
+        const x1 = cx + 25 * Math.cos(a), y1 = cy + 25 * Math.sin(a);
+        const x2 = cx + 68 * Math.cos(a), y2 = cy + 68 * Math.sin(a);
+        return (
+          <g key={i}>
+            <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#F5A623" strokeWidth="12" strokeLinecap="round" />
+            <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#FFD166" strokeWidth="3" strokeLinecap="round" opacity="0.35" />
+          </g>
+        );
+      })}
+      {/* Hub */}
+      <circle cx={cx} cy={cy} r="23" fill="#111" stroke="#F5A623" strokeWidth="2.5" />
+      <circle cx={cx} cy={cy} r="13" fill="#F5A623" />
+      <circle cx={cx} cy={cy} r="5" fill="#111" />
+      {/* 5 hub bolts */}
+      {Array.from({ length: 5 }, (_, i) => {
+        const a = (i * 72 - 90) * Math.PI / 180;
+        return <circle key={i} cx={cx + 18 * Math.cos(a)} cy={cy + 18 * Math.sin(a)} r="2.2" fill="#0D0D0D" />;
+      })}
+    </svg>
+  );
+};
 
 // ── Header ────────────────────────────────────────────────────────────────────
 
@@ -92,47 +119,43 @@ const Header = ({ user }) => {
     <header className={`site-header${scrolled ? ' scrolled' : ''}`}>
       <div className="header-inner">
         <Link to="/" className="logo-link" onClick={close}>
-          <span className="logo-wordmark">
-            KISH
-            <span className="logo-tyre-wrap">
-              <svg viewBox="0 0 28 28" className="logo-tyre-svg">
-                {/* Outer tyre */}
-                <circle cx="14" cy="14" r="13" fill="#FFFFFF" />
-                {/* Tread marks */}
-                {Array.from({ length: 16 }, (_, i) => {
-                  const a = (i * 22.5) * Math.PI / 180;
-                  const b = (i * 22.5 + 10) * Math.PI / 180;
-                  const r1 = 10, r2 = 13;
-                  const pts = [
-                    `${14 + r1 * Math.cos(a)},${14 + r1 * Math.sin(a)}`,
-                    `${14 + r2 * Math.cos(a)},${14 + r2 * Math.sin(a)}`,
-                    `${14 + r2 * Math.cos(b)},${14 + r2 * Math.sin(b)}`,
-                    `${14 + r1 * Math.cos(b)},${14 + r1 * Math.sin(b)}`,
-                  ].join(' ');
-                  return <polygon key={i} points={pts} fill="#111111" />;
-                })}
-                {/* Inner sidewall */}
-                <circle cx="14" cy="14" r="9.5" fill="#FFFFFF" />
-                {/* Rim */}
-                <circle cx="14" cy="14" r="7.5" fill="#CCCCCC" stroke="#111111" strokeWidth="0.8" />
-                {/* Spokes × 5 */}
-                {Array.from({ length: 5 }, (_, i) => {
-                  const a = (i * 72 - 90) * Math.PI / 180;
-                  return (
-                    <line key={i}
-                      x1={14 + 3 * Math.cos(a)} y1={14 + 3 * Math.sin(a)}
-                      x2={14 + 7 * Math.cos(a)} y2={14 + 7 * Math.sin(a)}
-                      stroke="#111111" strokeWidth="1.8" strokeLinecap="round" />
-                  );
-                })}
-                {/* Hub */}
-                <circle cx="14" cy="14" r="2.8" fill="#111111" />
-                <circle cx="14" cy="14" r="1.2" fill="#CCCCCC" />
-              </svg>
+          <div className="logo-pill">
+            <span className="logo-wordmark">
+              KISH
+              <span className="logo-tyre-wrap">
+                <svg viewBox="0 0 28 28" className="logo-tyre-svg">
+                  <circle cx="14" cy="14" r="13" fill="#1A1A1A" />
+                  {Array.from({ length: 14 }, (_, i) => {
+                    const a = (i * (360/14)) * Math.PI / 180;
+                    const b = (i * (360/14) + 16) * Math.PI / 180;
+                    const r1 = 9.5, r2 = 13;
+                    const pts = [
+                      `${14 + r1 * Math.cos(a)},${14 + r1 * Math.sin(a)}`,
+                      `${14 + r2 * Math.cos(a)},${14 + r2 * Math.sin(a)}`,
+                      `${14 + r2 * Math.cos(b)},${14 + r2 * Math.sin(b)}`,
+                      `${14 + r1 * Math.cos(b)},${14 + r1 * Math.sin(b)}`,
+                    ].join(' ');
+                    return <polygon key={i} points={pts} fill="#D4860A" />;
+                  })}
+                  <circle cx="14" cy="14" r="9" fill="#F5A623" />
+                  <circle cx="14" cy="14" r="7" fill="#1A1A1A" stroke="#0D0D0D" strokeWidth="0.5" />
+                  {Array.from({ length: 5 }, (_, i) => {
+                    const a = (i * 72 - 90) * Math.PI / 180;
+                    return (
+                      <line key={i}
+                        x1={14 + 2.5 * Math.cos(a)} y1={14 + 2.5 * Math.sin(a)}
+                        x2={14 + 6.5 * Math.cos(a)} y2={14 + 6.5 * Math.sin(a)}
+                        stroke="#F5A623" strokeWidth="1.6" strokeLinecap="round" />
+                    );
+                  })}
+                  <circle cx="14" cy="14" r="2.5" fill="#0D0D0D" />
+                  <circle cx="14" cy="14" r="1" fill="#F5A623" />
+                </svg>
+              </span>
+              R
             </span>
-            R
-          </span>
-          <span className="logo-tagline">360° tyre care solutions</span>
+            <span className="logo-tagline">360° tyre care solutions</span>
+          </div>
         </Link>
 
         <nav className={`main-nav${menuOpen ? ' open' : ''}`}>

@@ -74,7 +74,7 @@ const Services = () => {
       </nav>
 
       <header className="services-hero">
-        <h1>Our Services</h1>
+        <h1>OUR <span>SERVICES</span></h1>
         <p>Professional tyre remoulding for every vehicle — from tractors to heavy trucks</p>
       </header>
 
