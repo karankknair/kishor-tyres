@@ -13,7 +13,7 @@ class Command(BaseCommand):
         email = os.getenv('ADMIN_EMAIL', '')
 
         if not username or not password:
-            self.stdout.write('ADMIN_USERNAME/ADMIN_PASSWORD not set, skipping.')
+            self.stdout.write(f'ADMIN_USERNAME/ADMIN_PASSWORD not set, skipping. Keys present: {list(os.environ.keys())}')
             return
 
         if User.objects.filter(username=username).exists():
