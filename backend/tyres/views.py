@@ -253,7 +253,7 @@ class TestimonialViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'], permission_classes=[AllowAny])
     def active(self, request):
         testimonials = Testimonial.objects.filter(is_active=True).order_by('-created_at')
-        return Response(TestimonialSerializer(testimonials, many=True).data)
+        return Response(TestimonialSerializer(testimonials, many=True, context={'request': request}).data)
 
 
 class GalleryImageViewSet(viewsets.ModelViewSet):
@@ -266,7 +266,7 @@ class GalleryImageViewSet(viewsets.ModelViewSet):
         qs = GalleryImage.objects.filter(is_active=True)
         if request.query_params.get('category'):
             qs = qs.filter(category=request.query_params['category'])
-        return Response(GalleryImageSerializer(qs, many=True).data)
+        return Response(GalleryImageSerializer(qs, many=True, context={'request': request}).data)
 
 
 class DashboardStatsView(viewsets.ViewSet):
