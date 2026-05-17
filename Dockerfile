@@ -58,5 +58,5 @@ RUN python manage.py collectstatic --noinput
 # Expose port
 EXPOSE 8000
 
-# Run gunicorn
-CMD gunicorn kishor_tyres.wsgi:application --bind 0.0.0.0:$PORT --workers 4 --threads 2 --timeout 60
+# Run migrations then start gunicorn
+CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn kishor_tyres.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120"]
