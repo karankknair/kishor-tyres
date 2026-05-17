@@ -95,18 +95,44 @@ const Header = ({ user }) => {
           <span className="logo-wordmark">
             KISH
             <span className="logo-tyre-wrap">
-              <svg viewBox="0 0 22 22" className="logo-tyre-svg">
-                <circle cx="11" cy="11" r="9.5" stroke="#F5A623" strokeWidth="2" fill="none" />
-                <circle cx="11" cy="11" r="3.5" stroke="#F5A623" strokeWidth="1.5" fill="none" />
-                <line x1="11" y1="1.5" x2="11" y2="7.5" stroke="#F5A623" strokeWidth="1.5" />
-                <line x1="11" y1="14.5" x2="11" y2="20.5" stroke="#F5A623" strokeWidth="1.5" />
-                <line x1="1.5" y1="11" x2="7.5" y2="11" stroke="#F5A623" strokeWidth="1.5" />
-                <line x1="14.5" y1="11" x2="20.5" y2="11" stroke="#F5A623" strokeWidth="1.5" />
+              <svg viewBox="0 0 28 28" className="logo-tyre-svg">
+                {/* Outer tyre */}
+                <circle cx="14" cy="14" r="13" fill="#FFFFFF" />
+                {/* Tread marks */}
+                {Array.from({ length: 16 }, (_, i) => {
+                  const a = (i * 22.5) * Math.PI / 180;
+                  const b = (i * 22.5 + 10) * Math.PI / 180;
+                  const r1 = 10, r2 = 13;
+                  const pts = [
+                    `${14 + r1 * Math.cos(a)},${14 + r1 * Math.sin(a)}`,
+                    `${14 + r2 * Math.cos(a)},${14 + r2 * Math.sin(a)}`,
+                    `${14 + r2 * Math.cos(b)},${14 + r2 * Math.sin(b)}`,
+                    `${14 + r1 * Math.cos(b)},${14 + r1 * Math.sin(b)}`,
+                  ].join(' ');
+                  return <polygon key={i} points={pts} fill="#111111" />;
+                })}
+                {/* Inner sidewall */}
+                <circle cx="14" cy="14" r="9.5" fill="#FFFFFF" />
+                {/* Rim */}
+                <circle cx="14" cy="14" r="7.5" fill="#CCCCCC" stroke="#111111" strokeWidth="0.8" />
+                {/* Spokes × 5 */}
+                {Array.from({ length: 5 }, (_, i) => {
+                  const a = (i * 72 - 90) * Math.PI / 180;
+                  return (
+                    <line key={i}
+                      x1={14 + 3 * Math.cos(a)} y1={14 + 3 * Math.sin(a)}
+                      x2={14 + 7 * Math.cos(a)} y2={14 + 7 * Math.sin(a)}
+                      stroke="#111111" strokeWidth="1.8" strokeLinecap="round" />
+                  );
+                })}
+                {/* Hub */}
+                <circle cx="14" cy="14" r="2.8" fill="#111111" />
+                <circle cx="14" cy="14" r="1.2" fill="#CCCCCC" />
               </svg>
             </span>
-            R TYRE
+            R
           </span>
-          <span className="logo-tagline">360° Tyre Care Solutions</span>
+          <span className="logo-tagline">360° tyre care solutions</span>
         </Link>
 
         <nav className={`main-nav${menuOpen ? ' open' : ''}`}>
