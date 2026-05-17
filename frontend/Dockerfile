@@ -17,12 +17,6 @@ FROM nginx:alpine
 
 COPY --from=builder /app/build /usr/share/nginx/html
 
-# nginx config template that uses $PORT from Railway
-RUN printf 'server {\n  listen ${PORT:-80};\n  location / {\n    root /usr/share/nginx/html;\n    index index.html;\n    try_files $uri $uri/ /index.html;\n  }\n}\n' > /etc/nginx/templates/default.conf.template
-
-# Remove default config
-RUN rm /etc/nginx/conf.d/default.conf
-
 EXPOSE 80
 
-CMD ["/bin/sh", "-c", "export PORT=${PORT:-80} && envsubst '${PORT}' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
+CMD ["/bin/sh", "-c", "PORT=${PORT:-80} && sed -i \"s/listen 80/listen $PORT/g\" /etc/nginx/conf.d/default.conf && sed -i 's|try_files.*|try_files $uri $uri/ /index.html;|' /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
