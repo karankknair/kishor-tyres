@@ -16,9 +16,13 @@ class Command(BaseCommand):
             self.stdout.write('ADMIN_PASSWORD not set, skipping.')
             return
 
-        if User.objects.filter(username=username).exists():
-            self.stdout.write(f'Admin user "{username}" already exists.')
-            return
-
-        User.objects.create_superuser(username=username, email=email, password=password)
-        self.stdout.write(self.style.SUCCESS(f'Admin user "{username}" created.'))
+        user, created = User.objects.get_or_create(username=username)
+        if created:
+            user.set_password(password)
+        user.email = email
+        user.is_staff = True
+        user.is_superuser = True
+        user.user_type = 'admin'
+        user.save()
+        action = 'created' if created else 'updated'
+        self.stdout.write(self.style.SUCCESS(f'Admin user "{username}" {action}.'))

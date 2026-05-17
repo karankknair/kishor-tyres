@@ -79,7 +79,7 @@ const Header = ({ user }) => {
 
         <div className="header-actions">
           {user ? (
-            <Link to={user.user_type === 'admin' ? '/admin' : '/profile'} className="btn-login">
+            <Link to={(user.user_type === 'admin' || user.is_staff) ? '/admin' : '/profile'} className="btn-login">
               My Account
             </Link>
           ) : (
