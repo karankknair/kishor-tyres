@@ -8,12 +8,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         User = get_user_model()
-        username = os.getenv('ADMIN_USERNAME')
+        username = os.getenv('ADMIN_USERNAME') or 'admin'
         password = os.getenv('ADMIN_PASSWORD')
         email = os.getenv('ADMIN_EMAIL', '')
 
-        if not username or not password:
-            self.stdout.write(f'ADMIN_USERNAME/ADMIN_PASSWORD not set, skipping. Keys present: {list(os.environ.keys())}')
+        if not password:
+            self.stdout.write('ADMIN_PASSWORD not set, skipping.')
             return
 
         if User.objects.filter(username=username).exists():
