@@ -1,97 +1,141 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { publicAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import './Home.css';
 
-const Home = () => {
-  const { user } = useAuth();
-  const [companyInfo, setCompanyInfo] = useState(null);
-  const [testimonials, setTestimonials] = useState([]);
-  const [gallery, setGallery] = useState([]);
-  const [availableTyres, setAvailableTyres] = useState([]);
-  const [loading, setLoading] = useState(true);
+// ── Hooks ─────────────────────────────────────────────────────────────────────
 
+const useInView = (threshold = 0.15) => {
+  const ref = useRef(null);
+  const [inView, setInView] = useState(false);
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const [companyRes, testimonialsRes, galleryRes, tyresRes] = await Promise.all([
-        publicAPI.getCompanyInfo(),
-        publicAPI.getTestimonials(),
-        publicAPI.getGallery(),
-        publicAPI.getAvailableTyres(),
-      ]);
-
-      setCompanyInfo(companyRes.data);
-      setTestimonials(testimonialsRes.data);
-      setGallery(galleryRes.data);
-      setAvailableTyres(tyresRes.data);
-    } catch (err) {
-      console.error('Failed to fetch data');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
-    return <div className="loading-container">Loading...</div>;
-  }
-
-  return (
-    <div className="home-page">
-      <Header user={user} />
-      <HeroSection companyInfo={companyInfo} />
-      <AboutSection companyInfo={companyInfo} />
-      <AvailableTyresSection tyres={availableTyres} />
-      <GallerySection gallery={gallery} />
-      <TestimonialsSection testimonials={testimonials} />
-      <ContactSection companyInfo={companyInfo} />
-      <Footer companyInfo={companyInfo} />
-    </div>
-  );
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setInView(true); obs.disconnect(); } },
+      { threshold }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return [ref, inView];
 };
 
-// Header Component
+const useCounter = (target, active, duration = 1800) => {
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    if (!active) return;
+    const steps = 60;
+    const inc = target / steps;
+    let cur = 0; let t = 0;
+    const id = setInterval(() => {
+      t++;
+      cur = Math.min(Math.round(inc * t), target);
+      setVal(cur);
+      if (cur >= target) clearInterval(id);
+    }, duration / steps);
+    return () => clearInterval(id);
+  }, [active, target, duration]);
+  return val;
+};
+
+// ── SVG Tyre ──────────────────────────────────────────────────────────────────
+
+const TyreSVG = ({ className = '' }) => (
+  <svg className={className} viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="120" cy="120" r="116" fill="#111111" />
+    {Array.from({ length: 20 }, (_, i) => {
+      const a = (i * 18 - 8) * Math.PI / 180;
+      const b = (i * 18 + 8) * Math.PI / 180;
+      const r1 = 88, r2 = 114;
+      const pts = [
+        `${120 + r1 * Math.cos(a)},${120 + r1 * Math.sin(a)}`,
+        `${120 + r2 * Math.cos(a)},${120 + r2 * Math.sin(a)}`,
+        `${120 + r2 * Math.cos(b)},${120 + r2 * Math.sin(b)}`,
+        `${120 + r1 * Math.cos(b)},${120 + r1 * Math.sin(b)}`,
+      ].join(' ');
+      return <polygon key={i} points={pts} fill={i % 4 === 0 ? '#F5A623' : '#1E1E1E'} />;
+    })}
+    <circle cx="120" cy="120" r="82" fill="#0D0D0D" />
+    <circle cx="120" cy="120" r="72" fill="#1A1A1A" stroke="#F5A623" strokeWidth="2.5" />
+    {Array.from({ length: 5 }, (_, i) => {
+      const a = (i * 72 - 90) * Math.PI / 180;
+      return (
+        <line key={i}
+          x1={120 + 26 * Math.cos(a)} y1={120 + 26 * Math.sin(a)}
+          x2={120 + 68 * Math.cos(a)} y2={120 + 68 * Math.sin(a)}
+          stroke="#F5A623" strokeWidth="10" strokeLinecap="round" />
+      );
+    })}
+    <circle cx="120" cy="120" r="24" fill="#0D0D0D" stroke="#F5A623" strokeWidth="2.5" />
+    <circle cx="120" cy="120" r="11" fill="#F5A623" />
+    <circle cx="120" cy="120" r="4.5" fill="#0D0D0D" />
+  </svg>
+);
+
+// ── Header ────────────────────────────────────────────────────────────────────
+
 const Header = ({ user }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', fn);
+    return () => window.removeEventListener('scroll', fn);
+  }, []);
+
+  const close = () => setMenuOpen(false);
 
   return (
-    <header className="site-header">
-      <div className="header-container">
-        <div className="logo">
-          <Link to="/">
-            <span className="logo-icon">🚗</span>
-            <span className="logo-text">Kishor Tyres</span>
-          </Link>
-        </div>
+    <header className={`site-header${scrolled ? ' scrolled' : ''}`}>
+      <div className="header-inner">
+        <Link to="/" className="logo-link" onClick={close}>
+          <span className="logo-wordmark">
+            KISH
+            <span className="logo-tyre-wrap">
+              <svg viewBox="0 0 22 22" className="logo-tyre-svg">
+                <circle cx="11" cy="11" r="9.5" stroke="#F5A623" strokeWidth="2" fill="none" />
+                <circle cx="11" cy="11" r="3.5" stroke="#F5A623" strokeWidth="1.5" fill="none" />
+                <line x1="11" y1="1.5" x2="11" y2="7.5" stroke="#F5A623" strokeWidth="1.5" />
+                <line x1="11" y1="14.5" x2="11" y2="20.5" stroke="#F5A623" strokeWidth="1.5" />
+                <line x1="1.5" y1="11" x2="7.5" y2="11" stroke="#F5A623" strokeWidth="1.5" />
+                <line x1="14.5" y1="11" x2="20.5" y2="11" stroke="#F5A623" strokeWidth="1.5" />
+              </svg>
+            </span>
+            R TYRE
+          </span>
+          <span className="logo-tagline">360° Tyre Care Solutions</span>
+        </Link>
 
-        <nav className={`main-nav ${isMenuOpen ? 'open' : ''}`}>
-          <a href="#about">About</a>
-          <Link to="/services">Services</Link>
-          <Link to="/tyre-sizes">Tyre Sizes</Link>
-          <Link to="/portfolio">Portfolio</Link>
-          <Link to="/feedback">Feedback</Link>
-          <a href="#contact">Contact</a>
+        <nav className={`main-nav${menuOpen ? ' open' : ''}`}>
+          <a href="#about" onClick={close}>About</a>
+          <Link to="/services" onClick={close}>Services</Link>
+          <a href="#tyre-sizes" onClick={close}>Tyre Sizes</a>
+          <a href="#gallery" onClick={close}>Gallery</a>
+          <a href="#testimonials" onClick={close}>Reviews</a>
+          <a href="#contact" onClick={close}>Contact</a>
         </nav>
 
-        <div className="header-actions">
+        <div className="header-right">
           {user ? (
-            <Link to={(user.user_type === 'admin' || user.is_staff) ? '/admin' : '/profile'} className="btn-login">
+            <Link
+              to={(user.user_type === 'admin' || user.is_staff) ? '/admin' : '/profile'}
+              className="btn-account"
+              onClick={close}
+            >
               My Account
             </Link>
           ) : (
-            <Link to="/login" className="btn-login">
-              Login
-            </Link>
+            <Link to="/login" className="btn-account" onClick={close}>Login</Link>
           )}
           <button
-            className="menu-toggle"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className={`hamburger${menuOpen ? ' open' : ''}`}
+            onClick={() => setMenuOpen(o => !o)}
+            aria-label="Menu"
           >
-            ☰
+            <span /><span /><span />
           </button>
         </div>
       </div>
@@ -99,322 +143,337 @@ const Header = ({ user }) => {
   );
 };
 
-// Hero Section
+// ── Hero ──────────────────────────────────────────────────────────────────────
+
 const HeroSection = ({ companyInfo }) => {
+  const [statsRef, statsInView] = useInView(0.3);
+  const c1 = useCounter(50, statsInView);
+  const c2 = useCounter(10000, statsInView);
+  const c3 = useCounter(500, statsInView);
+
   return (
     <section className="hero-section">
-      <div className="hero-content">
-        <h1>{companyInfo?.name || 'Kishor Tyres'}</h1>
-        <p className="hero-tagline">{companyInfo?.tagline || 'Professional Tyre Remoulding Services'}</p>
-        <p className="hero-description">
-          {companyInfo?.description || 'Quality tyre remoulding services since 1995. We give old tyres a new life.'}
-        </p>
-        <div className="hero-cta">
-          <a href="#contact" className="btn-primary">Get a Quote</a>
-          <a href="#tyres" className="btn-secondary">View Tyres</a>
+      <div className="tread-bar"><div className="tread-track" /></div>
+
+      <div className="hero-inner">
+        <div className="hero-text">
+          <p className="hero-eyebrow">Est. {companyInfo?.established_year || 1995} — Pandharpur, Maharashtra</p>
+          <h1 className="hero-headline">
+            KISHOR TYRE<br />
+            <span className="gold">REMOULDING</span><br />
+            WORKS
+          </h1>
+          <p className="hero-sub">360° Tyre Care Solutions</p>
+          <p className="hero-desc">
+            Premium pre-cure &amp; mold-cure remoulding for tractors, trucks, JCBs and more.
+            Trusted quality by <strong>Kishor K Nair</strong> (B.E. Prod, MBA).
+          </p>
+          <div className="hero-btns">
+            <a href="#contact" className="btn-gold pulse-glow">Get a Quote</a>
+            <a href="#tyre-sizes" className="btn-outline">View Sizes</a>
+          </div>
+        </div>
+
+        <div className="hero-visual">
+          <div className="tyre-glow-ring" />
+          <TyreSVG className="hero-tyre spin" />
         </div>
       </div>
-      <div className="hero-stats">
-        <div className="stat">
-          <span className="stat-number">25+</span>
-          <span className="stat-label">Years Experience</span>
+
+      <div className="hero-stats" ref={statsRef}>
+        <div className="stat-card">
+          <span className="stat-num">{c1}+</span>
+          <span className="stat-lbl">Years Experience</span>
         </div>
-        <div className="stat">
-          <span className="stat-number">50K+</span>
-          <span className="stat-label">Tyres Remoulded</span>
+        <div className="stat-sep" />
+        <div className="stat-card">
+          <span className="stat-num">{c2 >= 10000 ? '10,000' : c2.toLocaleString()}+</span>
+          <span className="stat-lbl">Tyres Remoulded</span>
         </div>
-        <div className="stat">
-          <span className="stat-number">10K+</span>
-          <span className="stat-label">Happy Customers</span>
+        <div className="stat-sep" />
+        <div className="stat-card">
+          <span className="stat-num">{c3}+</span>
+          <span className="stat-lbl">Satisfied Clients</span>
         </div>
       </div>
     </section>
   );
 };
 
-// About Section
-const AboutSection = ({ companyInfo }) => {
+// ── Why Choose Us ─────────────────────────────────────────────────────────────
+
+const WHY_FEATURES = [
+  { icon: '🏆', title: 'Proven Excellence', desc: '50+ years of trusted remoulding expertise delivering consistent quality.' },
+  { icon: '⚙️', title: 'Advanced Technology', desc: 'State-of-the-art pre-cure and mold-cure systems for every tyre type.' },
+  { icon: '⚡', title: 'Fast Turnaround', desc: 'Quick processing without compromising on quality or durability.' },
+  { icon: '🌍', title: 'Wide Coverage', desc: 'Serving farmers, fleet owners and contractors across Maharashtra.' },
+];
+
+const WhySection = () => {
+  const [ref, inView] = useInView(0.1);
   return (
-    <section id="about" className="about-section">
-      <div className="section-container">
-        <div className="about-content">
-          <div className="about-text">
-            <h2>About Kishor Tyres</h2>
-            <p>
-              {companyInfo?.description ||
-                'Kishor Tyres has been a pioneer in tyre remoulding services since 1995. ' +
-                'We specialize in giving old tyres a new life using state-of-the-art technology.'}
-            </p>
-            <div className="features-grid">
-              <div className="feature">
-                <span className="feature-icon">✓</span>
-                <div>
-                  <h4>Quality Assurance</h4>
-                  <p>Every remoulded tyre undergoes rigorous testing</p>
-                </div>
-              </div>
-              <div className="feature">
-                <span className="feature-icon">✓</span>
-                <div>
-                  <h4>Expert Technicians</h4>
-                  <p>Over 25 years of industry experience</p>
-                </div>
-              </div>
-              <div className="feature">
-                <span className="feature-icon">✓</span>
-                <div>
-                  <h4>Cost Effective</h4>
-                  <p>Save up to 50% compared to new tyres</p>
-                </div>
-              </div>
-              <div className="feature">
-                <span className="feature-icon">✓</span>
-                <div>
-                  <h4>Eco-Friendly</h4>
-                  <p>Reduce waste and protect environment</p>
-                </div>
-              </div>
+    <section id="about" className="why-section">
+      <div className="section-wrap">
+        <div className="section-head">
+          <h2 className="section-title">Why Choose Us</h2>
+          <div className="section-rule" />
+        </div>
+        <p className="section-sub">Built on trust, quality and decades of expertise</p>
+        <div className="features-grid" ref={ref}>
+          {WHY_FEATURES.map((f, i) => (
+            <div
+              key={i}
+              className={`feature-card${inView ? ' visible' : ''}`}
+              style={{ transitionDelay: `${i * 0.1}s` }}
+            >
+              <span className="feat-icon">{f.icon}</span>
+              <h3 className="feat-title">{f.title}</h3>
+              <p className="feat-desc">{f.desc}</p>
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>
   );
 };
 
-// Available Tyres Section
-const AvailableTyresSection = ({ tyres }) => {
-  const [selectedSize, setSelectedSize] = useState(null);
+// ── Tyre Sizes ────────────────────────────────────────────────────────────────
+
+const TAB_LABELS = {
+  tractor: 'Tractor',
+  earth_mover: 'Earth Mover',
+  truck: 'Truck',
+  truck_bus_tubeless: 'Truck Tubeless',
+  tempo: 'Tempo',
+  mini_truck: 'Mini Truck',
+};
+
+const TyreSizesSection = () => {
+  const [grouped, setGrouped] = useState({});
+  const [activeTab, setActiveTab] = useState('');
+  const [ref, inView] = useInView(0.1);
+
+  useEffect(() => {
+    publicAPI.getTyreSizesGrouped()
+      .then(res => {
+        const data = res.data;
+        let groups = {};
+        if (Array.isArray(data)) {
+          data.forEach(t => {
+            const cat = t.vehicle_category;
+            if (!groups[cat]) groups[cat] = [];
+            groups[cat].push(t.size);
+          });
+        } else {
+          groups = data;
+        }
+        setGrouped(groups);
+        const first = Object.keys(groups)[0];
+        if (first) setActiveTab(first);
+      })
+      .catch(() => {});
+  }, []);
+
+  const tabs = Object.keys(grouped);
+  const sizes = grouped[activeTab] || [];
 
   return (
-    <section id="tyres" className="tyres-section">
-      <div className="section-container">
-        <h2>Available Remoulded Tyres</h2>
-        <p className="section-subtitle">
-          Quality remoulded tyres at affordable prices
-        </p>
+    <section id="tyre-sizes" className="sizes-section">
+      <div className="section-wrap">
+        <div className="section-head">
+          <h2 className="section-title">Available Tyre Sizes</h2>
+          <div className="section-rule" />
+        </div>
+        <p className="section-sub">Quality remoulded tyres for every vehicle category</p>
 
-        {tyres.length === 0 ? (
-          <div className="no-tyres-message">
-            <p>No tyres available at the moment. Please contact us for more information.</p>
-          </div>
-        ) : (
+        {tabs.length > 0 ? (
           <>
-            <div className="tyres-grid">
-              {tyres.map((tyre) => (
-                <div
-                  key={tyre.id}
-                  className={`tyre-card ${selectedSize === tyre.id ? 'selected' : ''}`}
-                  onClick={() => setSelectedSize(selectedSize === tyre.id ? null : tyre.id)}
+            <div className="tabs-bar">
+              {tabs.map(t => (
+                <button
+                  key={t}
+                  className={`tab-btn${activeTab === t ? ' active' : ''}`}
+                  onClick={() => setActiveTab(t)}
                 >
-                  <div className="tyre-image-placeholder">
-                    <span>🛞</span>
-                  </div>
-                  <div className="tyre-info">
-                    <h3>{tyre.size}</h3>
-                    <p className="tyre-description">{tyre.description}</p>
-                    <div className="tyre-price">
-                      <span className="price">₹{tyre.price}</span>
-                      <span className="unit">/tyre</span>
-                    </div>
-                    <button className="btn-inquire">
-                      Inquire Now
-                    </button>
-                  </div>
-                </div>
+                  {TAB_LABELS[t] || t}
+                </button>
               ))}
             </div>
-
-            <div className="tyre-sizes-info">
-              <h3>All Tyre Sizes Available</h3>
-              <div className="sizes-tags">
-                {['145/70 R12', '155/70 R13', '165/65 R14', '175/65 R14', '185/65 R15', '195/65 R15', '205/55 R16', '215/55 R17', '225/45 R17', '235/45 R18'].map((size) => (
-                  <span key={size} className="size-tag">{size}</span>
-                ))}
-              </div>
+            <div className={`chips-wrap${inView ? ' visible' : ''}`} ref={ref}>
+              {sizes.map((s, i) => (
+                <span key={i} className="size-chip">
+                  {typeof s === 'object' ? s.size : s}
+                </span>
+              ))}
             </div>
           </>
+        ) : (
+          <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>Loading tyre sizes…</p>
         )}
       </div>
     </section>
   );
 };
 
-// Gallery Section
+// ── Gallery ───────────────────────────────────────────────────────────────────
+
 const GallerySection = ({ gallery }) => {
-  const [selectedCategory, setSelectedCategory] = useState('all');
-
-  const categories = [
-    { id: 'all', label: 'All' },
-    { id: 'factory', label: 'Factory' },
-    { id: 'products', label: 'Products' },
-    { id: 'process', label: 'Process' },
-    { id: 'team', label: 'Team' },
-  ];
-
-  const filteredGallery = selectedCategory === 'all'
-    ? gallery
-    : gallery.filter((item) => item.category === selectedCategory);
+  const [filter, setFilter] = useState('all');
+  const cats = ['all', 'factory', 'products', 'process', 'team'];
+  const shown = filter === 'all' ? gallery : gallery.filter(g => g.category === filter);
 
   return (
     <section id="gallery" className="gallery-section">
-      <div className="section-container">
-        <h2>Our Gallery</h2>
-        <p className="section-subtitle">See our work in action</p>
+      <div className="section-wrap">
+        <div className="section-head">
+          <h2 className="section-title">Our Gallery</h2>
+          <div className="section-rule" />
+        </div>
+        <p className="section-sub">See our work in action</p>
 
         <div className="gallery-filters">
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              className={selectedCategory === cat.id ? 'active' : ''}
-              onClick={() => setSelectedCategory(cat.id)}
-            >
-              {cat.label}
+          {cats.map(c => (
+            <button key={c} className={`filter-btn${filter === c ? ' active' : ''}`}
+              onClick={() => setFilter(c)}>
+              {c.charAt(0).toUpperCase() + c.slice(1)}
             </button>
           ))}
         </div>
 
         <div className="gallery-grid">
-          {filteredGallery.length > 0 ? (
-            filteredGallery.map((item) => (
-              <div key={item.id} className="gallery-item">
-                <div className="gallery-image-placeholder">
-                  <span>📷 {item.title}</span>
-                </div>
+          {(shown.length > 0 ? shown : Array.from({ length: 6 }, (_, i) => ({ id: i, title: `Gallery ${i + 1}` }))).map(item => (
+            <div key={item.id} className="gallery-card">
+              {item.image
+                ? <img src={item.image} alt={item.title} />
+                : <div className="gallery-ph"><span>📷</span></div>
+              }
+              <div className="gallery-overlay">
+                <p>{item.title || 'Tyre Remoulding'}</p>
               </div>
-            ))
-          ) : (
-            <div className="gallery-placeholder">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="gallery-item placeholder">
-                  <div className="gallery-image-placeholder">
-                    <span>📷 Gallery Image {i}</span>
-                  </div>
-                </div>
-              ))}
             </div>
-          )}
+          ))}
         </div>
       </div>
     </section>
   );
 };
 
-// Testimonials Section
+// ── Testimonials ──────────────────────────────────────────────────────────────
+
+const FALLBACK_T = [
+  { id: 1, customer_name: 'Rahul Sharma', rating: 5, content: 'Excellent service! My tractor tyres look brand new. Quality remoulding at a very reasonable price.' },
+  { id: 2, customer_name: 'Priya Patel', rating: 5, content: 'Professional team and quick turnaround time. Have been using Kishor Tyres for years. Highly recommended!' },
+  { id: 3, customer_name: 'Amit Kumar', rating: 4, content: 'Great experience. The staff is knowledgeable and helped me choose the right remoulding type for my truck.' },
+  { id: 4, customer_name: 'Suresh Yadav', rating: 5, content: 'Very happy with the pre-cure remoulding. My JCB tyres are running perfectly after the remould.' },
+];
+
 const TestimonialsSection = ({ testimonials }) => {
-  const renderStars = (rating) => {
-    return '★'.repeat(rating) + '☆'.repeat(5 - rating);
-  };
+  const list = testimonials.length > 0 ? testimonials : FALLBACK_T;
+  const [idx, setIdx] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(() => setIdx(p => (p + 1) % list.length), 4000);
+    return () => clearInterval(t);
+  }, [list.length]);
+
+  const t = list[idx];
 
   return (
     <section id="testimonials" className="testimonials-section">
-      <div className="section-container">
-        <h2>What Our Customers Say</h2>
-        <p className="section-subtitle">Trusted by thousands of satisfied customers</p>
+      <div className="section-wrap">
+        <div className="section-head">
+          <h2 className="section-title">What Our Clients Say</h2>
+          <div className="section-rule" />
+        </div>
 
-        <div className="testimonials-grid">
-          {testimonials.length > 0 ? (
-            testimonials.map((testimonial) => (
-              <div key={testimonial.id} className="testimonial-card">
-                <div className="testimonial-header">
-                  <div className="testimonial-avatar">
-                    {testimonial.customer_name.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="testimonial-info">
-                    <h4>{testimonial.customer_name}</h4>
-                    <div className="rating">{renderStars(testimonial.rating)}</div>
-                  </div>
-                </div>
-                <p className="testimonial-content">{testimonial.content}</p>
+        <div className="testimonial-stage">
+          <div className="testimonial-card" key={idx}>
+            <span className="quote-mark">"</span>
+            <p className="t-text">{t.content}</p>
+            <div className="t-meta">
+              <div className="t-avatar">{t.customer_name.charAt(0)}</div>
+              <div>
+                <p className="t-name">{t.customer_name}</p>
+                <p className="t-stars">{'★'.repeat(t.rating)}{'☆'.repeat(5 - t.rating)}</p>
               </div>
-            ))
-          ) : (
-            [
-              {
-                name: 'Rahul Sharma',
-                rating: 5,
-                content: 'Excellent service! My tyres look brand new. The quality of remoulding is outstanding and the price is very reasonable.',
-              },
-              {
-                name: 'Priya Patel',
-                rating: 5,
-                content: 'Professional team and quick turnaround time. Have been using Kishor Tyres for years. Highly recommended!',
-              },
-              {
-                name: 'Amit Kumar',
-                rating: 4,
-                content: 'Great experience. The staff is knowledgeable and helped me choose the right tyres for my vehicle.',
-              },
-            ].map((t, i) => (
-              <div key={i} className="testimonial-card">
-                <div className="testimonial-header">
-                  <div className="testimonial-avatar">{t.name.charAt(0)}</div>
-                  <div className="testimonial-info">
-                    <h4>{t.name}</h4>
-                    <div className="rating">{renderStars(t.rating)}</div>
-                  </div>
-                </div>
-                <p className="testimonial-content">{t.content}</p>
-              </div>
-            ))
-          )}
+            </div>
+          </div>
+          <div className="carousel-dots">
+            {list.map((_, i) => (
+              <button
+                key={i}
+                className={`dot${i === idx ? ' active' : ''}`}
+                onClick={() => setIdx(i)}
+                aria-label={`Testimonial ${i + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
   );
 };
 
-// Contact Section
+// ── Contact ───────────────────────────────────────────────────────────────────
+
 const ContactSection = ({ companyInfo }) => {
+  const [fields, setFields] = useState({ name: '', email: '', phone: '', message: '' });
+  const [focused, setFocused] = useState({});
+
+  const change = e => setFields(p => ({ ...p, [e.target.name]: e.target.value }));
+  const focus = e => setFocused(p => ({ ...p, [e.target.name]: true }));
+  const blur = e => setFocused(p => ({ ...p, [e.target.name]: false }));
+  const floated = name => focused[name] || !!fields[name];
+
   return (
     <section id="contact" className="contact-section">
-      <div className="section-container">
-        <h2>Contact Us</h2>
-        <p className="section-subtitle">Get in touch for quotes and inquiries</p>
+      <div className="section-wrap">
+        <div className="section-head">
+          <h2 className="section-title">Get In Touch</h2>
+          <div className="section-rule" />
+        </div>
+        <p className="section-sub">Contact us for quotes and enquiries</p>
 
         <div className="contact-grid">
-          <div className="contact-info">
-            <div className="contact-item">
-              <span className="icon">📍</span>
-              <div>
-                <h4>Address</h4>
-                <p>{companyInfo?.address || '123 Industrial Area, Mumbai-Pune Highway, Maharashtra 410206'}</p>
+          <div className="contact-info-col">
+            {[
+              { icon: '📍', label: 'Address', val: companyInfo?.address || 'Plot No. 77, Industrial Estate, Navi Solapur Road, Sangam Chowk, Pandharpur – 413 304, Dist. Solapur (Maharashtra)' },
+              { icon: '📞', label: 'Phone', val: '02186-223343 | 9404069233 | 9373630393' },
+              { icon: '✉️', label: 'Email', val: companyInfo?.email || 'info@kishortyres.com' },
+              { icon: '🕐', label: 'Hours', val: companyInfo?.working_hours || 'Mon – Sat: 9:00 AM – 7:00 PM' },
+            ].map(item => (
+              <div key={item.label} className="contact-row">
+                <span className="contact-icon">{item.icon}</span>
+                <div>
+                  <p className="contact-label">{item.label}</p>
+                  <p className="contact-val">{item.val}</p>
+                </div>
               </div>
-            </div>
-
-            <div className="contact-item">
-              <span className="icon">📞</span>
-              <div>
-                <h4>Phone</h4>
-                <p>{companyInfo?.phone || '+91 98765 43210'}</p>
-              </div>
-            </div>
-
-            <div className="contact-item">
-              <span className="icon">✉️</span>
-              <div>
-                <h4>Email</h4>
-                <p>{companyInfo?.email || 'info@kishortyres.com'}</p>
-              </div>
-            </div>
-
-            <div className="contact-item">
-              <span className="icon">🕐</span>
-              <div>
-                <h4>Working Hours</h4>
-                <p>{companyInfo?.working_hours || 'Monday - Saturday: 9:00 AM - 7:00 PM'}</p>
-              </div>
+            ))}
+            <div className="proprietor-badge">
+              <p className="prop-name">Kishor K Nair</p>
+              <p className="prop-title">Proprietor — B.E. Prod, MBA</p>
             </div>
           </div>
 
-          <form className="contact-form">
-            <div className="form-row">
-              <input type="text" placeholder="Your Name" required />
-              <input type="email" placeholder="Your Email" required />
+          <form className="contact-form" onSubmit={e => e.preventDefault()}>
+            {[
+              { name: 'name', label: 'Your Name', type: 'text' },
+              { name: 'email', label: 'Email Address', type: 'email' },
+              { name: 'phone', label: 'Phone Number', type: 'tel' },
+            ].map(f => (
+              <div key={f.name} className={`float-field${floated(f.name) ? ' floated' : ''}`}>
+                <input type={f.type} name={f.name} value={fields[f.name]}
+                  onChange={change} onFocus={focus} onBlur={blur} autoComplete="off" />
+                <label>{f.label}</label>
+              </div>
+            ))}
+            <div className={`float-field textarea-wrap${floated('message') ? ' floated' : ''}`}>
+              <textarea name="message" rows={5} value={fields.message}
+                onChange={change} onFocus={focus} onBlur={blur} />
+              <label>Your Message</label>
             </div>
-            <input type="tel" placeholder="Phone Number" />
-            <textarea placeholder="Your Message" rows="5" required></textarea>
-            <button type="submit" className="btn-submit">Send Message</button>
+            <button type="submit" className="btn-gold btn-full">Send Message</button>
           </form>
         </div>
       </div>
@@ -422,45 +481,88 @@ const ContactSection = ({ companyInfo }) => {
   );
 };
 
-// Footer
-const Footer = ({ companyInfo }) => {
+// ── Footer ────────────────────────────────────────────────────────────────────
+
+const Footer = ({ companyInfo }) => (
+  <footer className="site-footer">
+    <div className="footer-grid">
+      <div className="footer-brand">
+        <p className="footer-name">KISHOR TYRE REMOULDING WORKS</p>
+        <p className="footer-tag">360° Tyre Care Solutions</p>
+        <p className="footer-prop">Proprietor: Kishor K Nair</p>
+      </div>
+      <div className="footer-col">
+        <h4>Quick Links</h4>
+        <a href="#about">About</a>
+        <a href="#tyre-sizes">Tyre Sizes</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div className="footer-col">
+        <h4>Services</h4>
+        <Link to="/services">Tractor Remoulding</Link>
+        <Link to="/services">Truck &amp; JCB Remoulding</Link>
+        <Link to="/services">Tyre Repair</Link>
+      </div>
+      <div className="footer-col">
+        <h4>Contact</h4>
+        <p>02186-223343</p>
+        <p>9404069233</p>
+        <p>9373630393</p>
+        <p>{companyInfo?.email || 'info@kishortyres.com'}</p>
+      </div>
+    </div>
+    <div className="footer-bottom">
+      <div className="footer-rule" />
+      <p>© {new Date().getFullYear()} Kishor Tyre Remoulding Works. All rights reserved.</p>
+    </div>
+  </footer>
+);
+
+// ── Page ──────────────────────────────────────────────────────────────────────
+
+const Home = () => {
+  const { user } = useAuth();
+  const [companyInfo, setCompanyInfo] = useState(null);
+  const [testimonials, setTestimonials] = useState([]);
+  const [gallery, setGallery] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      publicAPI.getCompanyInfo(),
+      publicAPI.getTestimonials(),
+      publicAPI.getGallery(),
+    ])
+      .then(([c, t, g]) => {
+        setCompanyInfo(c.data);
+        setTestimonials(t.data);
+        setGallery(g.data);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="loading-screen">
+        <TyreSVG className="loading-tyre spin" />
+        <p>Loading…</p>
+      </div>
+    );
+  }
+
   return (
-    <footer className="site-footer">
-      <div className="footer-container">
-        <div className="footer-brand">
-          <h3>{companyInfo?.name || 'Kishor Tyres'}</h3>
-          <p>{companyInfo?.tagline || 'Professional Tyre Remoulding Services'}</p>
-        </div>
-
-        <div className="footer-links">
-          <div className="footer-column">
-            <h4>Quick Links</h4>
-            <a href="#about">About</a>
-            <a href="#tyres">Tyres</a>
-            <a href="#gallery">Gallery</a>
-            <a href="#contact">Contact</a>
-          </div>
-
-          <div className="footer-column">
-            <h4>Services</h4>
-            <a href="#">Tyre Remoulding</a>
-            <a href="#">Tyre Sales</a>
-            <a href="#">Tyre Repair</a>
-            <a href="#">Wheel Alignment</a>
-          </div>
-
-          <div className="footer-column">
-            <h4>Contact</h4>
-            <p>📞 {companyInfo?.phone || '+91 98765 43210'}</p>
-            <p>✉️ {companyInfo?.email || 'info@kishortyres.com'}</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="footer-bottom">
-        <p>© {new Date().getFullYear()} {companyInfo?.name || 'Kishor Tyres'}. All rights reserved.</p>
-      </div>
-    </footer>
+    <div className="home-page">
+      <Header user={user} />
+      <HeroSection companyInfo={companyInfo} />
+      <WhySection />
+      <TyreSizesSection />
+      <GallerySection gallery={gallery} />
+      <TestimonialsSection testimonials={testimonials} />
+      <ContactSection companyInfo={companyInfo} />
+      <Footer companyInfo={companyInfo} />
+    </div>
   );
 };
 
