@@ -739,24 +739,124 @@
   text-align: center;
 }
 
-/* Responsive */
+/* ── Mobile Top Bar (hidden on desktop) ──────────────────────────────── */
+.admin-topbar {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 60px;
+  background: #0D0D0D;
+  border-bottom: 1px solid #2A2A2A;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 1001;
+}
+
+.admin-topbar-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.admin-topbar-toggle span {
+  display: block;
+  width: 24px; height: 2px;
+  background: #F5A623;
+  border-radius: 2px;
+}
+
+.admin-topbar-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1rem;
+  color: #FFFFFF;
+  letter-spacing: 1px;
+}
+
+.admin-topbar-avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: #F5A623;
+  color: #0D0D0D;
+  font-weight: 800;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Close button inside sidebar — mobile only */
+.admin-sidebar-close {
+  display: none;
+  position: absolute;
+  top: 14px; right: 14px;
+  background: none;
+  border: none;
+  color: #CCCCCC;
+  font-size: 1.2rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px;
+}
+
+.admin-sidebar-close:hover { color: #F5A623; }
+
+/* Sidebar overlay backdrop */
+.admin-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 999;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
+  /* Show mobile top bar */
+  .admin-topbar { display: flex; }
+
+  /* Sidebar slides in from left as overlay */
   .admin-sidebar {
-    width: 100%;
-    position: relative;
-    height: auto;
+    position: fixed;
+    top: 0; bottom: 0;
+    left: -260px;
+    width: 260px;
+    z-index: 1000;
+    transition: left 0.3s ease;
   }
 
+  .admin-sidebar.open { left: 0; }
+
+  .admin-sidebar-close { display: block; }
+
+  /* Content takes full width, offset for topbar */
   .admin-content {
     margin-left: 0;
+    padding-top: 80px;
   }
 
-  .admin-dashboard {
-    flex-direction: column;
-  }
+  /* Dashboard stat cards — 2×2 on tablet */
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
 
-  .tyre-numbers-list { grid-template-columns: 1fr; }
+  /* Tables scrollable */
+  .data-table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* Forms */
   .form-row { grid-template-columns: 1fr; }
+  .tyre-numbers-list { grid-template-columns: 1fr; }
+  .filters-bar { flex-wrap: wrap; }
+  .filters-bar input,
+  .filters-bar select { flex: 1 1 calc(50% - 8px); min-width: 120px; }
+}
+
+@media (max-width: 480px) {
+  /* Stats single column on small phones */
+  .stats-grid { grid-template-columns: 1fr; }
+  .filters-bar input,
+  .filters-bar select { flex: 1 1 100%; }
 }
 
 /* ── Image Upload Field ───────────────────────────────────────── */

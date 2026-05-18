@@ -131,19 +131,24 @@ const HeroSection = ({ companyInfo }) => {
             Est. {companyInfo?.established_year || 1995} — Pandharpur, Maharashtra
           </p>
           <h1 className="hero-headline">
-            <span className="headline-word">KISHOR TYRE</span><br />
-            <span className="headline-word gold headline-remoulding" style={{ animationDelay: '0.08s' }}>REMOULDING</span><br />
-            <span className="headline-word" style={{ animationDelay: '0.16s' }}>WORKS</span>
+            <span className="headline-word">360° TYRE CARE</span><br />
+            <span className="headline-word" style={{ animationDelay: '0.08s' }}>SOLUTIONS</span>
           </h1>
-          <p className="hero-sub">360° Tyre Care Solutions</p>
+          <span className="hero-stamp">Only Available at Kishor Tyre Remoulding Works</span>
           <p className="hero-desc">
-            Premium pre-cure &amp; mold-cure remoulding for tractors, trucks, JCBs and more.
-            Trusted quality by <strong>Kishor K Nair</strong> (B.E. Prod, MBA).
+            Premium pre-cure &amp; mold-cure remoulding for tractors,
+            trucks, JCBs and more. Trusted quality by <strong>Kishor K Nair</strong> (B.E. Prod, MBA).
           </p>
           <div className="hero-btns">
             <a href="#contact" className="btn-gold pulse-glow">Get a Quote</a>
             <a href="#tyre-sizes" className="btn-outline">View Sizes</a>
           </div>
+        </div>
+        <div className="hero-tyre-wrap">
+          <div className="tyre-ambient" />
+          <div className="glow-ring" />
+          <div className="glow-ring glow-ring-2" />
+          <div className="hero-tyre" />
         </div>
       </div>
 

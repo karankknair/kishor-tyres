@@ -40,11 +40,53 @@
 
 .hero-tyre-wrap {
   position: relative;
-  width: 320px;
-  height: 320px;
+  width: 340px;
+  height: 340px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Pure CSS rotating tyre — right side of hero */
+.hero-tyre {
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  position: relative;
+  animation: heroTyreSpin 8s linear infinite;
+  flex-shrink: 0;
+}
+
+.hero-tyre::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 48px solid #1A1A1A;
+  border-top-color: #F5A800;
+  border-right-color: #2A2A2A;
+  border-bottom-color: #C88A00;
+  border-left-color: #1A1A1A;
+  box-shadow:
+    inset 0 0 20px rgba(0,0,0,0.8),
+    0 0 0 4px #2A2A2A,
+    0 0 0 6px #F5A800;
+}
+
+.hero-tyre::after {
+  content: '';
+  position: absolute;
+  inset: 68px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #2A2A2A 0%, #111111 100%);
+  border: 3px solid #F5A800;
+  box-shadow: inset 0 0 16px rgba(0,0,0,0.9);
+}
+
+@keyframes heroTyreSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
 .tyre-ambient {
@@ -147,8 +189,8 @@
 }
 
 .loader-tyre {
-  width: 120px;
-  height: 120px;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
   position: relative;
   animation: tyreSpin 1.2s linear infinite;
@@ -161,7 +203,7 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 22px solid #111111;
+  border: 32px solid #111111;
   border-top-color: #F5A800;
   border-right-color: #C88A00;
   border-bottom-color: #F5A800;
@@ -172,16 +214,16 @@
 .loader-tyre::after {
   content: '';
   position: absolute;
-  inset: 32px;
+  inset: 45px;
   border-radius: 50%;
   background: #111111;
-  border: 3px solid #F5A800;
-  box-shadow: inset 0 0 8px rgba(0,0,0,0.8);
+  border: 4px solid #F5A800;
+  box-shadow: inset 0 0 12px rgba(0,0,0,0.9);
 }
 
 .loader-bar-track {
-  width: 140px;
-  height: 3px;
+  width: 200px;
+  height: 4px;
   background: #2A2A2A;
   border-radius: 2px;
 }
@@ -239,9 +281,9 @@
 }
 
 .section-wrap {
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 5rem 2rem;
+  padding: 5rem 1.5rem;
 }
 
 .section-head {
@@ -435,6 +477,7 @@
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  min-height: 100vh;
 }
 
 .tread-bar {
@@ -464,18 +507,19 @@
 
 .hero-inner {
   flex: 1;
-  max-width: 860px;
+  max-width: 1280px;
   margin: 0 auto;
   width: 100%;
   padding: 120px 40px 80px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  text-align: center;
+  justify-content: space-between;
+  gap: 4rem;
 }
 
 .hero-text {
-  width: 100%;
+  flex: 1;
   animation: fadeInUp 0.8s ease both;
 }
 
@@ -504,8 +548,9 @@
 
 .hero-headline {
   font-family: 'Bebas Neue', 'Oswald', sans-serif;
-  font-size: clamp(3rem, 6vw, 5.5rem);
-  line-height: 0.95;
+  font-size: clamp(52px, 9vw, 110px);
+  font-weight: 900;
+  line-height: 1.0;
   color: #FFFFFF;
   margin-bottom: 0;
   letter-spacing: 2px;
@@ -522,13 +567,17 @@
   filter: none;
 }
 
-.hero-sub {
-  font-size: 1.1rem;
-  color: #F5A623;
-  letter-spacing: 1px;
-  margin-top: 20px;
-  margin-bottom: 0;
+.hero-stamp {
+  display: block;
+  color: #F5A800;
   font-family: 'Oswald', sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  letter-spacing: 1px;
+  padding: 8px 0;
+  border-top: 1px solid #F5A800;
+  border-bottom: 1px solid #F5A800;
+  margin: 20px 0;
 }
 
 .hero-desc {
@@ -541,7 +590,7 @@
 
 .hero-desc strong { color: #F5A623; }
 
-.hero-btns { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-top: 32px; }
+.hero-btns { display: flex; justify-content: flex-start; gap: 16px; flex-wrap: wrap; margin-top: 32px; }
 
 .hero-visual {
   flex-shrink: 0;
@@ -1034,39 +1083,83 @@
 
 /* ── Responsive ──────────────────────────────────────────────────────────────── */
 
-@media (max-width: 900px) {
+/* Tablet ≤1024px */
+@media (max-width: 1024px) {
+  .hero-inner { gap: 2.5rem; padding: 100px 32px 60px; }
+  .hero-tyre-wrap { width: 240px; height: 240px; }
+  .hero-tyre { width: 200px; height: 200px; }
+  .hero-tyre::before { border-width: 35px; }
+  .hero-tyre::after { inset: 49px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .features-grid { grid-template-columns: repeat(2, 1fr); }
+  .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+}
+
+/* Mobile ≤640px */
+@media (max-width: 640px) {
+  /* Navbar — full-screen drawer */
+  .logo-img { width: 120px; height: auto; }
   .main-nav {
     display: none;
     position: fixed;
-    top: 65px; left: 0; right: 0;
-    background: rgba(13,13,13,0.97);
+    inset: 0;
+    background: #111111;
     flex-direction: column;
-    padding: 1.5rem 2rem;
-    gap: 1.2rem;
-    border-bottom: 1px solid #2A2A2A;
-    backdrop-filter: blur(12px);
+    padding: 100px 24px 24px;
+    gap: 0;
+    z-index: 998;
+    overflow-y: auto;
   }
   .main-nav.open { display: flex; }
+  .main-nav a {
+    padding: 16px 0;
+    font-size: 1.1rem;
+    border-bottom: 1px solid #2A2A2A;
+    color: #FFFFFF;
+  }
   .hamburger { display: flex; }
 
-  .hero-inner { flex-direction: column; text-align: center; padding: 3rem 1.5rem 2rem; gap: 3rem; }
-  .hero-desc { margin-left: auto; margin-right: auto; }
-  .hero-btns { justify-content: center; }
+  /* Hero */
+  .hero-inner {
+    flex-direction: column;
+    text-align: center;
+    padding: 80px 1rem 2rem;
+    gap: 2rem;
+    align-items: center;
+  }
+  .hero-text { width: 100%; }
   .hero-eyebrow { justify-content: center; }
-  .hero-visual { width: 300px; height: 300px; }
+  .hero-desc { margin-left: auto; margin-right: auto; }
+  .hero-btns { justify-content: center; flex-direction: column; }
+  .hero-btns a, .hero-btns .btn-gold, .hero-btns .btn-outline { width: 100%; text-align: center; }
+  .hero-tyre-wrap { display: none; }
+  .hero-stamp { font-size: 14px; }
 
-  .hero-stats { flex-direction: column; gap: 1.5rem; }
+  /* Stats — single column */
+  .hero-stats { flex-direction: column; gap: 1.5rem; padding: 2rem 1rem; margin-top: 0; }
   .stat-sep { width: 60px; height: 1px; }
-  .stat-card { padding: 0 1rem; }
+  .stat-card { padding: 0 1rem; width: 100%; }
 
-  .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  /* Sections */
+  .section-wrap { padding: 3rem 1rem; }
+  .section-title { font-size: clamp(1.5rem, 6vw, 2rem); }
 
-  .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
-}
+  /* Features — 1 column */
+  .features-grid { grid-template-columns: 1fr; }
+  .feature-card { padding: 1rem; }
 
-@media (max-width: 600px) {
-  .section-wrap { padding: 3.5rem 1.2rem; }
+  /* Tyre size tabs — horizontal scroll */
+  .tabs-bar { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+  .tab-btn { flex-shrink: 0; }
+  .size-chip { padding: 0.35rem 0.8rem; font-size: 0.82rem; }
+
+  /* Gallery */
   .gallery-grid { grid-template-columns: 1fr 1fr; }
-  .footer-grid { grid-template-columns: 1fr; }
-  .hero-headline { font-size: 2.8rem; }
+
+  /* Contact */
+  .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+
+  /* Footer — single column centered */
+  .footer-grid { grid-template-columns: 1fr; text-align: center; gap: 1.5rem; }
+  .footer-col a, .footer-col p { text-align: center; }
 }

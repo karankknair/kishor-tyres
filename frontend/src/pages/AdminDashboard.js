@@ -1333,6 +1333,7 @@ const AdminDashboard = () => {
   const [tab, setTab] = useState('dashboard');
   const [stats, setStats] = useState(null);
   const [statsLoading, setStatsLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (isAdmin) {
@@ -1344,6 +1345,8 @@ const AdminDashboard = () => {
 
   if (!user) return <Navigate to="/login" replace />;
   if (!isAdmin) return <Navigate to="/" replace />;
+
+  const switchTab = (id) => { setTab(id); setSidebarOpen(false); };
 
   const renderContent = () => {
     switch (tab) {
@@ -1365,14 +1368,29 @@ const AdminDashboard = () => {
 
   return (
     <div className="admin-dashboard">
-      <div className="admin-sidebar">
+      {/* Mobile top bar */}
+      <div className="admin-topbar">
+        <button className="admin-topbar-toggle" onClick={() => setSidebarOpen(true)} aria-label="Open menu">
+          <span /><span /><span />
+        </button>
+        <span className="admin-topbar-title">Kishor Tyres</span>
+        <div className="admin-topbar-avatar">
+          {(user?.first_name || user?.username || 'A').charAt(0).toUpperCase()}
+        </div>
+      </div>
+
+      {/* Overlay backdrop */}
+      {sidebarOpen && <div className="admin-overlay" onClick={() => setSidebarOpen(false)} />}
+
+      <div className={`admin-sidebar${sidebarOpen ? ' open' : ''}`}>
+        <button className="admin-sidebar-close" onClick={() => setSidebarOpen(false)} aria-label="Close menu">✕</button>
         <div className="admin-brand">
           <h2>Kishor Tyres</h2>
           <p>Admin Panel</p>
         </div>
         <nav className="admin-nav">
           {TABS.map((t) => (
-            <button key={t.id} className={tab === t.id ? 'active' : ''} onClick={() => setTab(t.id)}>
+            <button key={t.id} className={tab === t.id ? 'active' : ''} onClick={() => switchTab(t.id)}>
               {t.label}
               {t.id === 'overdue' && stats?.overdue_jobs > 0 && (
                 <span className="nav-badge">{stats.overdue_jobs}</span>
