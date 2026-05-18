@@ -159,11 +159,6 @@ const HeroSection = ({ companyInfo }) => {
 
   return (
     <section className="hero-section">
-      <div className="tread-bar">
-        <div className="tread-track tread-fwd" />
-        <div className="tread-track tread-rev" />
-      </div>
-
       <div className="hero-inner">
         <div className="hero-text">
           <p className="hero-eyebrow">

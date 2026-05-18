@@ -447,7 +447,6 @@
 /* ── Hero ────────────────────────────────────────────────────────────────────── */
 
 .hero-section {
-  min-height: 100vh;
   background: radial-gradient(ellipse 70% 60% at 50% 45%, rgba(245,166,35,0.07) 0%, transparent 70%),
               #0D0D0D;
   display: flex;
