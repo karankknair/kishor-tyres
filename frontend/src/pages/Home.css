@@ -343,52 +343,15 @@
 .logo-link {
   text-decoration: none;
   display: inline-flex;
-  flex-direction: column;
-  align-items: flex-start;
-  line-height: 1.1;
+  align-items: center;
   flex-shrink: 0;
 }
 
-.logo-pill {
-  background: #F5A623;
-  border-radius: 5px;
-  padding: 5px 10px 6px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.logo-wordmark {
-  font-family: 'Bebas Neue', 'Oswald', sans-serif;
-  font-size: 1.6rem;
-  letter-spacing: 4px;
-  color: #0D0D0D;
-  display: flex;
-  align-items: center;
-  gap: 1px;
-  border-bottom: 2px solid #0D0D0D;
-  padding-bottom: 2px;
-  line-height: 1;
-}
-
-.logo-tyre-wrap {
-  display: inline-flex;
-  align-items: center;
-  margin: 0 1px;
-  position: relative;
-  top: -1px;
-}
-
-.logo-tyre-svg { width: 20px; height: 20px; }
-
-.logo-tagline {
-  font-size: 0.5rem;
-  color: #1A1A1A;
-  letter-spacing: 1px;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  margin-top: 2px;
-  text-transform: uppercase;
+.logo-img {
+  height: 48px;
+  width: auto;
+  display: block;
+  border-radius: 4px;
 }
 
 .main-nav {

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { publicAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import kishorLogo from '../kishor_logo.svg';
 import './Home.css';
 
 // ── Hooks ─────────────────────────────────────────────────────────────────────
@@ -76,43 +77,7 @@ const Header = ({ user }) => {
     <header className={`site-header${scrolled ? ' scrolled' : ''}`}>
       <div className="header-inner">
         <Link to="/" className="logo-link" onClick={close}>
-          <div className="logo-pill">
-            <span className="logo-wordmark">
-              KISH
-              <span className="logo-tyre-wrap">
-                <svg viewBox="0 0 28 28" className="logo-tyre-svg">
-                  <circle cx="14" cy="14" r="13" fill="#1A1A1A" />
-                  {Array.from({ length: 14 }, (_, i) => {
-                    const a = (i * (360/14)) * Math.PI / 180;
-                    const b = (i * (360/14) + 16) * Math.PI / 180;
-                    const r1 = 9.5, r2 = 13;
-                    const pts = [
-                      `${14 + r1 * Math.cos(a)},${14 + r1 * Math.sin(a)}`,
-                      `${14 + r2 * Math.cos(a)},${14 + r2 * Math.sin(a)}`,
-                      `${14 + r2 * Math.cos(b)},${14 + r2 * Math.sin(b)}`,
-                      `${14 + r1 * Math.cos(b)},${14 + r1 * Math.sin(b)}`,
-                    ].join(' ');
-                    return <polygon key={i} points={pts} fill="#D4860A" />;
-                  })}
-                  <circle cx="14" cy="14" r="9" fill="#F5A623" />
-                  <circle cx="14" cy="14" r="7" fill="#1A1A1A" stroke="#0D0D0D" strokeWidth="0.5" />
-                  {Array.from({ length: 5 }, (_, i) => {
-                    const a = (i * 72 - 90) * Math.PI / 180;
-                    return (
-                      <line key={i}
-                        x1={14 + 2.5 * Math.cos(a)} y1={14 + 2.5 * Math.sin(a)}
-                        x2={14 + 6.5 * Math.cos(a)} y2={14 + 6.5 * Math.sin(a)}
-                        stroke="#F5A623" strokeWidth="1.6" strokeLinecap="round" />
-                    );
-                  })}
-                  <circle cx="14" cy="14" r="2.5" fill="#0D0D0D" />
-                  <circle cx="14" cy="14" r="1" fill="#F5A623" />
-                </svg>
-              </span>
-              R
-            </span>
-            <span className="logo-tagline">360° tyre care solutions</span>
-          </div>
+          <img src={kishorLogo} alt="Kishor Tyre Remoulding Works" className="logo-img" />
         </Link>
 
         <nav className={`main-nav${menuOpen ? ' open' : ''}`}>
