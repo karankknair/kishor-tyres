@@ -40,66 +40,23 @@ const useCounter = (target, active, duration = 1800) => {
   return val;
 };
 
-// ── SVG Tyre ──────────────────────────────────────────────────────────────────
+// ── Loading Screen ────────────────────────────────────────────────────────────
 
-const TyreSVG = ({ className = '' }) => {
-  const cx = 120, cy = 120;
-  // 18 angled tread lugs — offset inner/outer edge for a real lug tyre look
-  const lugs = Array.from({ length: 18 }, (_, i) => {
-    const base = (i * 20) * Math.PI / 180;
-    const skew = 4 * Math.PI / 180;
-    const r1 = 88, r2 = 112;
-    const wa = 7 * Math.PI / 180;
-    return [
-      `${cx + r1 * Math.cos(base - wa)},${cy + r1 * Math.sin(base - wa)}`,
-      `${cx + r2 * Math.cos(base - wa + skew)},${cy + r2 * Math.sin(base - wa + skew)}`,
-      `${cx + r2 * Math.cos(base + wa + skew)},${cy + r2 * Math.sin(base + wa + skew)}`,
-      `${cx + r1 * Math.cos(base + wa)},${cy + r1 * Math.sin(base + wa)}`,
-    ].join(' ');
-  });
-
-  return (
-    <svg className={className} viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Outer tyre body */}
-      <circle cx={cx} cy={cy} r="116" fill="#1A1A1A" />
-      {/* Tyre shoulder ring */}
-      <circle cx={cx} cy={cy} r="116" fill="none" stroke="#2A2A2A" strokeWidth="6" />
-      {/* Tread lugs — uniform dark, angled like real lugs */}
-      {lugs.map((pts, i) => (
-        <polygon key={i} points={pts} fill="#272727" stroke="#111" strokeWidth="0.8" />
-      ))}
-      {/* Sidewall */}
-      <circle cx={cx} cy={cy} r="83" fill="#111111" />
-      {/* Sidewall text ring (decorative) */}
-      <circle cx={cx} cy={cy} r="83" fill="none" stroke="#1E1E1E" strokeWidth="3" />
-      {/* Rim outer ring */}
-      <circle cx={cx} cy={cy} r="72" fill="#181818" stroke="#F5A623" strokeWidth="2.5" />
-      {/* Rim inner ring */}
-      <circle cx={cx} cy={cy} r="50" fill="none" stroke="#2A2A2A" strokeWidth="1" />
-      {/* 5 spokes — tapered with highlight */}
-      {Array.from({ length: 5 }, (_, i) => {
-        const a = (i * 72 - 90) * Math.PI / 180;
-        const x1 = cx + 25 * Math.cos(a), y1 = cy + 25 * Math.sin(a);
-        const x2 = cx + 68 * Math.cos(a), y2 = cy + 68 * Math.sin(a);
-        return (
-          <g key={i}>
-            <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#F5A623" strokeWidth="12" strokeLinecap="round" />
-            <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#FFD166" strokeWidth="3" strokeLinecap="round" opacity="0.35" />
-          </g>
-        );
-      })}
-      {/* Hub */}
-      <circle cx={cx} cy={cy} r="23" fill="#111" stroke="#F5A623" strokeWidth="2.5" />
-      <circle cx={cx} cy={cy} r="13" fill="#F5A623" />
-      <circle cx={cx} cy={cy} r="5" fill="#111" />
-      {/* 5 hub bolts */}
-      {Array.from({ length: 5 }, (_, i) => {
-        const a = (i * 72 - 90) * Math.PI / 180;
-        return <circle key={i} cx={cx + 18 * Math.cos(a)} cy={cy + 18 * Math.sin(a)} r="2.2" fill="#0D0D0D" />;
-      })}
-    </svg>
-  );
-};
+const LoadingScreen = ({ onDone }) => (
+  <div
+    className="loading-screen"
+    onAnimationEnd={(e) => { if (e.animationName === 'loaderFade') onDone(); }}
+  >
+    <div className="loader-tyre" />
+    <div className="loader-bar-track">
+      <div className="loader-bar-fill" />
+    </div>
+    <div className="loader-brand">
+      <span className="loader-brand-main">KISHOR</span>
+      <span className="loader-brand-sub">TYRE REMOULDING WORKS</span>
+    </div>
+  </div>
+);
 
 // ── Hero Tyre (real photo, circular, rotating) ────────────────────────────────
 
@@ -603,7 +560,7 @@ const Home = () => {
   const [companyInfo, setCompanyInfo] = useState(null);
   const [testimonials, setTestimonials] = useState([]);
   const [gallery, setGallery] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [showLoader, setShowLoader] = useState(true);
 
   useEffect(() => {
     Promise.all([
@@ -616,17 +573,11 @@ const Home = () => {
         setTestimonials(t.data);
         setGallery(g.data);
       })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+      .catch(() => {});
   }, []);
 
-  if (loading) {
-    return (
-      <div className="loading-screen">
-        <TyreSVG className="loading-tyre spin" />
-        <p>Loading…</p>
-      </div>
-    );
+  if (showLoader) {
+    return <LoadingScreen onDone={() => setShowLoader(false)} />;
   }
 
   return (

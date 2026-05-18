@@ -1,9 +1,5 @@
 /* ── Animations ──────────────────────────────────────────────────────────────── */
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
 
 @keyframes treadScroll {
   from { background-position: 0 0; }
@@ -123,23 +119,84 @@
 
 /* ── Loading ─────────────────────────────────────────────────────────────────── */
 
+@keyframes tyreSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fillBar {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+@keyframes loaderFade {
+  from { opacity: 1; }
+  to   { opacity: 0; pointer-events: none; }
+}
+
 .loading-screen {
+  position: fixed;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
   background: #0D0D0D;
-  gap: 1.5rem;
-  color: #F5A623;
-  font-family: 'Oswald', sans-serif;
-  font-size: 1.2rem;
-  letter-spacing: 2px;
+  z-index: 9999;
+  animation: loaderFade 0.4s ease 2.5s forwards;
 }
 
-.loading-tyre { width: 80px; height: 80px; }
+.loader-tyre {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 14px solid #1A1A1A;
+  border-top: 14px solid #F5A623;
+  border-right: 14px solid #D4860A;
+  border-bottom: 14px solid #F5A623;
+  border-left: 14px solid #1A1A1A;
+  animation: tyreSpin 1s linear infinite;
+  box-shadow: 0 0 30px rgba(245,166,35,0.2);
+}
 
-.spin { animation: spin 3s linear infinite; }
+.loader-bar-track {
+  width: 140px;
+  height: 3px;
+  background: #2A2A2A;
+  border-radius: 2px;
+  margin-top: 28px;
+}
+
+.loader-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: #F5A623;
+  border-radius: 2px;
+  animation: fillBar 2.5s ease forwards;
+}
+
+.loader-brand {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.loader-brand-main {
+  color: #FFFFFF;
+  font-family: 'Oswald', 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  letter-spacing: 6px;
+  line-height: 1;
+}
+
+.loader-brand-sub {
+  color: #F5A623;
+  font-family: 'Oswald', 'Inter', sans-serif;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
 
 /* ── Global shared ───────────────────────────────────────────────────────────── */
 
