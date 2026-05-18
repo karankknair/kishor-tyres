@@ -58,26 +58,6 @@ const LoadingScreen = ({ onDone }) => (
   </div>
 );
 
-// ── Hero Tyre (real photo, circular, rotating) ────────────────────────────────
-
-const HeroTyre = () => (
-  <div className="hero-tyre-wrap">
-    <div className="tyre-ambient" />
-    <div className="glow-ring" />
-    <div className="glow-ring glow-ring-2" />
-    <img
-      src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"
-      alt="Tyre tread close-up"
-      className="tyre-image"
-      draggable="false"
-    />
-    <div className="live-badge">
-      <span className="live-badge-dot" aria-hidden="true" />
-      Live Remoulding
-    </div>
-  </div>
-);
-
 // ── Header ────────────────────────────────────────────────────────────────────
 
 const Header = ({ user }) => {
@@ -204,10 +184,6 @@ const HeroSection = ({ companyInfo }) => {
             <a href="#contact" className="btn-gold pulse-glow">Get a Quote</a>
             <a href="#tyre-sizes" className="btn-outline">View Sizes</a>
           </div>
-        </div>
-
-        <div className="hero-visual">
-          <HeroTyre />
         </div>
       </div>
 

@@ -448,26 +448,25 @@
 
 .hero-section {
   min-height: 100vh;
-  background: radial-gradient(ellipse 70% 60% at 70% 50%, rgba(245,166,35,0.07) 0%, transparent 70%),
+  background: radial-gradient(ellipse 70% 60% at 50% 45%, rgba(245,166,35,0.07) 0%, transparent 70%),
               #0D0D0D;
   display: flex;
   flex-direction: column;
   position: relative;
-  padding-top: 80px;
   overflow: hidden;
 }
 
 .tread-bar {
   position: absolute;
   bottom: 0; left: 0; right: 0;
-  height: 36px;
+  height: 20px;
   overflow: hidden;
   z-index: 2;
 }
 
 /* Two-row tread track — rows scroll in opposite directions for depth */
 .tread-track {
-  height: 18px;
+  height: 10px;
   background-image: repeating-linear-gradient(
     105deg,
     #F5A623 0px,  #F5A623 14px,
@@ -475,7 +474,7 @@
     #D4860A 20px, #D4860A 34px,
     #0F0F0F 34px, #0F0F0F 40px
   );
-  background-size: 96px 18px;
+  background-size: 96px 10px;
   background-repeat: repeat-x;
 }
 
@@ -484,17 +483,18 @@
 
 .hero-inner {
   flex: 1;
-  max-width: 1200px;
+  max-width: 860px;
   margin: 0 auto;
   width: 100%;
-  padding: 4rem 2rem 3rem;
+  padding: 120px 40px 80px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 4rem;
+  text-align: center;
 }
 
 .hero-text {
-  flex: 1;
+  width: 100%;
   animation: fadeInUp 0.8s ease both;
 }
 
@@ -524,9 +524,9 @@
 .hero-headline {
   font-family: 'Bebas Neue', 'Oswald', sans-serif;
   font-size: clamp(3rem, 6vw, 5.5rem);
-  line-height: 1.05;
+  line-height: 0.95;
   color: #FFFFFF;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
   letter-spacing: 2px;
 }
 
@@ -536,16 +536,17 @@
   animation: fadeInUp 0.7s ease both;
 }
 
-/* Amber text-shadow glow on REMOULDING */
 .headline-remoulding {
-  text-shadow: 0 0 40px rgba(245,166,35,0.45), 0 0 80px rgba(245,166,35,0.15);
+  text-shadow: none;
+  filter: none;
 }
 
 .hero-sub {
   font-size: 1.1rem;
   color: #F5A623;
   letter-spacing: 1px;
-  margin-bottom: 1rem;
+  margin-top: 20px;
+  margin-bottom: 0;
   font-family: 'Oswald', sans-serif;
 }
 
@@ -553,13 +554,13 @@
   color: #CCCCCC;
   font-size: 1rem;
   line-height: 1.7;
-  max-width: 480px;
-  margin-bottom: 2.5rem;
+  max-width: 560px;
+  margin: 12px auto 0;
 }
 
 .hero-desc strong { color: #F5A623; }
 
-.hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+.hero-btns { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-top: 32px; }
 
 .hero-visual {
   flex-shrink: 0;
@@ -579,6 +580,7 @@
   align-items: center;
   gap: 0;
   padding: 2.5rem 2rem 3rem;
+  margin-top: 60px;
   border-top: 1px solid #2A2A2A;
 }
 
