@@ -25,36 +25,49 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes pressGroupRotate {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+/* Retreading rubber-application animation
+   Circumference: r=100.5 → 632px, r=113.5 → 713px
+   rubber-fill, rubber-sheen and stitcher-group all use 5s linear so they stay in sync. */
+
+@keyframes rubberFill {
+  0%    { stroke-dasharray: 0 632;   opacity: 1; }
+  84%   { stroke-dasharray: 632 632; opacity: 1; }
+  93%   { stroke-dasharray: 632 632; opacity: 0; }
+  100%  { stroke-dasharray: 0 632;   opacity: 0; }
 }
 
-@keyframes treadStamp {
-  0%    { fill: #272727; }
-  6%    { fill: #C87800; }
-  14%   { fill: #3A2800; }
-  28%   { fill: #272727; }
-  100%  { fill: #272727; }
+@keyframes rubberSheen {
+  0%    { stroke-dasharray: 0 713;   opacity: 0; }
+  4%    { opacity: 0.55; }
+  84%   { stroke-dasharray: 713 713; opacity: 0.55; }
+  93%   { stroke-dasharray: 713 713; opacity: 0; }
+  100%  { stroke-dasharray: 0 713;   opacity: 0; }
 }
 
-@keyframes remoulGlow {
-  0%, 100% { opacity: 0.07; }
-  50%      { opacity: 0.28; }
+@keyframes stitcherRotate {
+  0%    { transform: rotate(0deg);   opacity: 1; }
+  84%   { transform: rotate(360deg); opacity: 1; }
+  93%   { transform: rotate(360deg); opacity: 0; }
+  100%  { transform: rotate(0deg);   opacity: 0; }
 }
 
-.press-group {
-  transform-origin: 120px 120px;
-  animation: pressGroupRotate 4s linear infinite;
+@keyframes buffFade {
+  0%    { opacity: 0; }
+  5%    { opacity: 1; }
+  84%   { opacity: 0; }
+  100%  { opacity: 0; }
 }
 
-.tread-stamp {
-  animation: treadStamp 4s ease-in-out infinite;
+@keyframes stitcherGlow {
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 1; }
 }
 
-.remould-outer-glow {
-  animation: remoulGlow 2s ease-in-out infinite;
-}
+.rubber-fill    { animation: rubberFill 5s linear infinite; }
+.rubber-sheen   { animation: rubberSheen 5s linear infinite; }
+.buff-line      { animation: buffFade 5s ease-in-out infinite; }
+.stitcher-group { transform-origin: 120px 120px; animation: stitcherRotate 5s linear infinite; }
+.stitcher-glow  { animation: stitcherGlow 0.45s ease-in-out infinite; }
 
 /* ── Loading ─────────────────────────────────────────────────────────────────── */
 

@@ -102,61 +102,55 @@ const TyreSVG = ({ className = '' }) => {
 };
 
 // ── SVG Remoulding Animation ──────────────────────────────────────────────────
+// Retreading process: stitcher roller pastes rubber strip onto buffed carcass.
+// rubber-fill and stitcher-group both animate over 5s linear so they stay in sync.
+// Circumference at r=100.5 ≈ 632; at r=114 ≈ 716.
 
 const RemouldinAnimationSVG = ({ className = '' }) => {
   const cx = 120, cy = 120;
-  const numTread = 20;
 
-  const treads = Array.from({ length: numTread }, (_, i) => {
-    const base = (i * (360 / numTread)) * Math.PI / 180;
-    const skew = 4 * Math.PI / 180;
-    const r1 = 87, r2 = 113;
-    const wa = 7.5 * Math.PI / 180;
-    const pts = [
-      `${cx + r1 * Math.cos(base - wa)},${cy + r1 * Math.sin(base - wa)}`,
-      `${cx + r2 * Math.cos(base - wa + skew)},${cy + r2 * Math.sin(base - wa + skew)}`,
-      `${cx + r2 * Math.cos(base + wa + skew)},${cy + r2 * Math.sin(base + wa + skew)}`,
-      `${cx + r1 * Math.cos(base + wa)},${cy + r1 * Math.sin(base + wa)}`,
-    ].join(' ');
-    return { pts, delay: (i * (4 / numTread)).toFixed(2) };
+  const buffLines = Array.from({ length: 36 }, (_, i) => {
+    const a = (i * 10) * Math.PI / 180;
+    return {
+      x1: cx + 88 * Math.cos(a), y1: cy + 88 * Math.sin(a),
+      x2: cx + 113 * Math.cos(a), y2: cy + 113 * Math.sin(a),
+    };
   });
 
   return (
     <svg className={className} viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Outer heat glow ring */}
-      <circle cx={cx} cy={cy} r="118" fill="none" stroke="#F5A623" strokeWidth="3" className="remould-outer-glow" />
-
       {/* Tyre body */}
       <circle cx={cx} cy={cy} r="116" fill="#1A1A1A" />
 
-      {/* Raw rubber compound band */}
-      <circle cx={cx} cy={cy} r="100" fill="none" stroke="#1D1D1D" strokeWidth="26" />
+      {/* Bare buffed tread zone — slightly lighter than body */}
+      <circle cx={cx} cy={cy} r="100.5" fill="none" stroke="#252525" strokeWidth="27" />
 
-      {/* Rotating press group */}
-      <g className="press-group">
-        {/* Main press arc */}
-        <circle cx={cx} cy={cy} r="102" fill="none" stroke="#F5A623" strokeWidth="4"
-                strokeDasharray="55 586" />
-        {/* Press glow diffuse */}
-        <circle cx={cx} cy={cy} r="102" fill="none" stroke="#F5A623" strokeWidth="14"
-                strokeDasharray="30 611" opacity="0.2" />
-        {/* Heat shimmer lines at press contact point */}
-        <line x1={cx + 88} y1={cy} x2={cx + 96} y2={cy} stroke="#FFD166" strokeWidth="2" opacity="0.85" />
-        <line x1={cx + 110} y1={cy} x2={cx + 119} y2={cy} stroke="#FF8C00" strokeWidth="1.5" opacity="0.6" />
-      </g>
-
-      {/* Tread blocks — flash gold as the press passes */}
-      {treads.map((t, i) => (
-        <polygon
-          key={i}
-          points={t.pts}
-          fill="#272727"
-          stroke="#111"
-          strokeWidth="0.8"
-          className="tread-stamp"
-          style={{ animationDelay: `-${t.delay}s` }}
-        />
+      {/* Buffed surface radial scratch lines */}
+      {buffLines.map((l, i) => (
+        <line key={i} x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2}
+          stroke="#333" strokeWidth="0.8" className="buff-line" />
       ))}
+
+      {/* Rubber compound arc — grows clockwise from 3 o'clock behind the roller */}
+      <circle cx={cx} cy={cy} r="100.5" fill="none"
+        stroke="#6B3200" strokeWidth="27" className="rubber-fill" />
+
+      {/* Sheen highlight on freshly applied rubber (outer edge) */}
+      <circle cx={cx} cy={cy} r="113.5" fill="none"
+        stroke="#8B4500" strokeWidth="3" className="rubber-sheen" />
+
+      {/* Stitcher roller group — rotates in lockstep with rubber fill */}
+      <g className="stitcher-group">
+        {/* Rubber strip feeding in from outside the tyre */}
+        <line x1={cx + 126} y1={cy} x2={cx + 117} y2={cy}
+          stroke="#6B3200" strokeWidth="7" strokeLinecap="round" />
+        {/* Stitcher roller */}
+        <circle cx={cx + 117} cy={cy} r="6" fill="#555" stroke="#888" strokeWidth="1.5" />
+        <circle cx={cx + 117} cy={cy} r="2.5" fill="#2A2A2A" />
+        {/* Pressure glow ring */}
+        <circle cx={cx + 117} cy={cy} r="9" fill="none"
+          stroke="#F5A623" strokeWidth="1.2" className="stitcher-glow" />
+      </g>
 
       {/* Sidewall */}
       <circle cx={cx} cy={cy} r="83" fill="#111111" />
