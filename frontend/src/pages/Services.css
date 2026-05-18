@@ -2,9 +2,9 @@
 
 .services-page {
   min-height: 100vh;
-  background: #0D0D0D;
+  background: #F5A800;
   font-family: 'Inter', 'Poppins', sans-serif;
-  color: #CCCCCC;
+  color: #111111;
 }
 
 /* ── Breadcrumb nav ──────────────────────────────────────────────────────────── */
@@ -83,9 +83,9 @@
 }
 
 .service-card {
-  background: #1A1A1A;
-  border: 1px solid #2A2A2A;
-  border-top: 3px solid #F5A623;
+  background: #FFB800;
+  border: 1px solid #C88A00;
+  border-top: 3px solid #111111;
   border-radius: 10px;
   padding: 2rem;
   display: flex;
@@ -95,9 +95,9 @@
 }
 
 .service-card:hover {
-  border-color: #F5A623;
+  border-color: #111111;
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(245,166,35,0.1);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
 }
 
 .service-icon {
@@ -109,20 +109,20 @@
   font-family: 'Oswald', 'Bebas Neue', sans-serif;
   font-size: 1.25rem;
   letter-spacing: 1px;
-  color: #FFFFFF;
+  color: #111111;
   margin: 0;
 }
 
 .service-desc {
-  color: #888;
+  color: #3A2800;
   font-size: 0.9rem;
   line-height: 1.65;
   margin: 0;
 }
 
 .service-sizes {
-  background: #111;
-  border: 1px solid #2A2A2A;
+  background: rgba(0,0,0,0.08);
+  border: 1px solid #C88A00;
   border-radius: 5px;
   padding: 8px 12px;
   font-size: 0.82rem;
@@ -132,13 +132,13 @@
 }
 
 .size-label {
-  color: #666;
+  color: #3A2800;
   font-size: 0.78rem;
 }
 
 .size-value {
   font-weight: 600;
-  color: #F5A623;
+  color: #111111;
   font-family: 'Oswald', sans-serif;
   letter-spacing: 0.5px;
 }
@@ -154,14 +154,14 @@
 
 .service-features li {
   font-size: 0.88rem;
-  color: #AAAAAA;
+  color: #3A2800;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .check {
-  color: #F5A623;
+  color: #111111;
   font-weight: 700;
   font-size: 0.85rem;
   flex-shrink: 0;
@@ -171,8 +171,8 @@
   display: inline-block;
   margin-top: auto;
   padding: 10px 20px;
-  background: #F5A623;
-  color: #0D0D0D;
+  background: #111111;
+  color: #F5A800;
   border-radius: 6px;
   text-decoration: none;
   font-weight: 700;
@@ -183,7 +183,7 @@
 }
 
 .service-cta-btn:hover {
-  background: #D4860A;
+  background: #333333;
   transform: translateY(-1px);
 }
 
@@ -260,20 +260,19 @@
 .services-cta-section {
   text-align: center;
   padding: 80px 40px;
-  background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(245,166,35,0.06) 0%, transparent 70%),
-              #0D0D0D;
+  background: #F5A800;
 }
 
 .services-cta-section h2 {
   font-family: 'Oswald', 'Bebas Neue', sans-serif;
   font-size: clamp(1.6rem, 3vw, 2.4rem);
   letter-spacing: 1px;
-  color: #FFFFFF;
+  color: #111111;
   margin-bottom: 12px;
 }
 
 .services-cta-section p {
-  color: #888;
+  color: #3A2800;
   margin-bottom: 36px;
   font-size: 1rem;
 }
@@ -287,8 +286,8 @@
 
 .btn-primary {
   padding: 0.85rem 2rem;
-  background: #F5A623;
-  color: #0D0D0D;
+  background: #111111;
+  color: #F5A800;
   border-radius: 6px;
   text-decoration: none;
   font-weight: 700;
@@ -297,13 +296,13 @@
   transition: background 0.2s, transform 0.2s;
 }
 
-.btn-primary:hover { background: #D4860A; transform: translateY(-2px); }
+.btn-primary:hover { background: #333333; transform: translateY(-2px); }
 
 .btn-secondary {
   padding: 0.85rem 2rem;
   background: transparent;
-  color: #F5A623;
-  border: 2px solid #F5A623;
+  color: #111111;
+  border: 2px solid #111111;
   border-radius: 6px;
   text-decoration: none;
   font-weight: 600;
@@ -313,8 +312,8 @@
 }
 
 .btn-secondary:hover {
-  background: #F5A623;
-  color: #0D0D0D;
+  background: #111111;
+  color: #F5A800;
   transform: translateY(-2px);
 }
 

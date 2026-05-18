@@ -47,68 +47,56 @@ const useCounter = (target, active, duration = 1800) => {
 const HeroTyre = () => (
   <div className="hero-tyre-wrapper">
     <svg
-      viewBox="0 0 280 280"
+      viewBox="0 0 300 300"
       width="280"
       height="280"
       className="hero-tyre-svg"
-      style={{ animation: 'heroTyreSpin 8s linear infinite' }}
+      style={{ animation: 'heroTyreSpin 10s linear infinite' }}
     >
-      <circle cx="140" cy="140" r="130" fill="#1A1A1A" />
+      {/* Tyre body */}
+      <circle cx="150" cy="150" r="140" fill="#111111" />
 
-      {Array.from({ length: 24 }).map((_, i) => {
-        const angle = (i * 360) / 24;
+      {/* 20 outer tread blocks */}
+      {Array.from({ length: 20 }).map((_, i) => {
+        const angle = (i * 360) / 20;
         const rad = (angle * Math.PI) / 180;
-        const x = 140 + 118 * Math.cos(rad);
-        const y = 140 + 118 * Math.sin(rad);
+        const x = 150 + 128 * Math.cos(rad);
+        const y = 150 + 128 * Math.sin(rad);
         return (
           <rect
             key={i}
-            x="-10" y="-7" width="20" height="14" rx="2"
-            fill={i % 3 === 0 ? '#F5A800' : '#2A2A2A'}
+            x="-11" y="-8" width="22" height="16" rx="3"
+            fill={i % 4 === 0 ? '#F5A800' : '#2A2A2A'}
+            stroke="#111" strokeWidth="1.5"
+            transform={`translate(${x}, ${y}) rotate(${angle + 90})`}
+          />
+        );
+      })}
+
+      {/* Outer groove ring */}
+      <circle cx="150" cy="150" r="112" fill="none" stroke="#111111" strokeWidth="4" />
+
+      {/* 16 middle tread blocks */}
+      {Array.from({ length: 16 }).map((_, i) => {
+        const angle = (i * 360) / 16 + 11.25;
+        const rad = (angle * Math.PI) / 180;
+        const x = 150 + 96 * Math.cos(rad);
+        const y = 150 + 96 * Math.sin(rad);
+        return (
+          <rect
+            key={i}
+            x="-7" y="-5" width="14" height="10" rx="2"
+            fill={i % 2 === 0 ? '#C88A00' : '#1A1A1A'}
             stroke="#111" strokeWidth="1"
             transform={`translate(${x}, ${y}) rotate(${angle + 90})`}
           />
         );
       })}
 
-      <circle cx="140" cy="140" r="100" fill="none" stroke="#111111" strokeWidth="3" />
-      <circle cx="140" cy="140" r="95"  fill="none" stroke="#2A2A2A" strokeWidth="1" />
-
-      {Array.from({ length: 16 }).map((_, i) => {
-        const angle = (i * 360) / 16 + 11.25;
-        const rad = (angle * Math.PI) / 180;
-        const x = 140 + 97 * Math.cos(rad);
-        const y = 140 + 97 * Math.sin(rad);
-        return (
-          <rect
-            key={i}
-            x="-6" y="-4" width="12" height="8" rx="1"
-            fill={i % 2 === 0 ? '#C88A00' : '#1A1A1A'}
-            stroke="#111" strokeWidth="0.5"
-            transform={`translate(${x}, ${y}) rotate(${angle + 90})`}
-          />
-        );
-      })}
-
-      <circle cx="140" cy="140" r="88" fill="#111111" />
-      <circle cx="140" cy="140" r="82" fill="none" stroke="#F5A800" strokeWidth="2" />
-      <circle cx="140" cy="140" r="78" fill="#1A1A1A" />
-
-      {Array.from({ length: 5 }).map((_, i) => {
-        const angle = (i * 72 * Math.PI) / 180;
-        return (
-          <line
-            key={i}
-            x1="140" y1="140"
-            x2={140 + 72 * Math.cos(angle)}
-            y2={140 + 72 * Math.sin(angle)}
-            stroke="#2A2A2A" strokeWidth="6" strokeLinecap="round"
-          />
-        );
-      })}
-
-      <circle cx="140" cy="140" r="14" fill="#1A1A1A" stroke="#F5A800" strokeWidth="2" />
-      <circle cx="140" cy="140" r="6"  fill="#F5A800" />
+      {/* Inner tyre wall — solid rubber, no spokes */}
+      <circle cx="150" cy="150" r="74" fill="#1A1A1A" />
+      <circle cx="150" cy="150" r="60" fill="none" stroke="#333333" strokeWidth="3" />
+      <circle cx="150" cy="150" r="52" fill="#111111" stroke="#2A2A2A" strokeWidth="2" />
     </svg>
   </div>
 );
@@ -315,14 +303,20 @@ const TyreSizesSection = ({ lang }) => {
     publicAPI.getTyreSizesGrouped()
       .then(res => {
         const data = res.data;
+        console.log('[TyreSizes] API response:', data);
         let groups = {};
-        if (Array.isArray(data)) {
-          data.forEach(t => {
-            const cat = t.vehicle_category;
+        if (Array.isArray(data) && data.length > 0 && data[0].sizes !== undefined) {
+          // [{category: 'tractor', sizes: ['6.00-16', ...]}]
+          data.forEach(item => { groups[item.category] = item.sizes; });
+        } else if (Array.isArray(data)) {
+          // [{vehicle_category: 'tractor', size: '6.00-16'}]
+          data.forEach(item => {
+            const cat = item.vehicle_category;
             if (!groups[cat]) groups[cat] = [];
-            groups[cat].push(t.size);
+            groups[cat].push(item.size);
           });
         } else {
+          // {tractor: ['6.00-16', ...]}
           groups = data;
         }
         setGrouped(groups);
