@@ -26,22 +26,25 @@
 }
 
 /* Retreading rubber-application animation
-   Circumference: r=100.5 → 632px, r=113.5 → 713px
-   rubber-fill, rubber-sheen and stitcher-group all use 5s linear so they stay in sync. */
+   Uses stroke-dashoffset (not stroke-dasharray) for reliable cross-browser support.
+   strokeDasharray is set as an SVG attribute on each element.
+   Circumference: r=100.5 → 632  |  r=113.5 → 713
+   All three key animations use identical 5s linear timing so the stitcher
+   stays locked to the rubber's leading edge throughout. */
 
 @keyframes rubberFill {
-  0%    { stroke-dasharray: 0 632;   opacity: 1; }
-  84%   { stroke-dasharray: 632 632; opacity: 1; }
-  93%   { stroke-dasharray: 632 632; opacity: 0; }
-  100%  { stroke-dasharray: 0 632;   opacity: 0; }
+  0%    { stroke-dashoffset: 632; opacity: 1; }
+  84%   { stroke-dashoffset: 0;   opacity: 1; }
+  93%   { stroke-dashoffset: 0;   opacity: 0; }
+  100%  { stroke-dashoffset: 632; opacity: 0; }
 }
 
 @keyframes rubberSheen {
-  0%    { stroke-dasharray: 0 713;   opacity: 0; }
-  4%    { opacity: 0.55; }
-  84%   { stroke-dasharray: 713 713; opacity: 0.55; }
-  93%   { stroke-dasharray: 713 713; opacity: 0; }
-  100%  { stroke-dasharray: 0 713;   opacity: 0; }
+  0%    { stroke-dashoffset: 713; opacity: 0; }
+  5%    { opacity: 0.7; }
+  84%   { stroke-dashoffset: 0;   opacity: 0.7; }
+  93%   { stroke-dashoffset: 0;   opacity: 0; }
+  100%  { stroke-dashoffset: 713; opacity: 0; }
 }
 
 @keyframes stitcherRotate {
@@ -53,13 +56,13 @@
 
 @keyframes buffFade {
   0%    { opacity: 0; }
-  5%    { opacity: 1; }
+  4%    { opacity: 1; }
   84%   { opacity: 0; }
   100%  { opacity: 0; }
 }
 
 @keyframes stitcherGlow {
-  0%, 100% { opacity: 0.35; }
+  0%, 100% { opacity: 0.3; }
   50%      { opacity: 1; }
 }
 
@@ -67,7 +70,7 @@
 .rubber-sheen   { animation: rubberSheen 5s linear infinite; }
 .buff-line      { animation: buffFade 5s ease-in-out infinite; }
 .stitcher-group { transform-origin: 120px 120px; animation: stitcherRotate 5s linear infinite; }
-.stitcher-glow  { animation: stitcherGlow 0.45s ease-in-out infinite; }
+.stitcher-glow  { animation: stitcherGlow 0.4s ease-in-out infinite; }
 
 /* ── Loading ─────────────────────────────────────────────────────────────────── */
 

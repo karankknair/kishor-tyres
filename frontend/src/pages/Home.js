@@ -102,9 +102,10 @@ const TyreSVG = ({ className = '' }) => {
 };
 
 // ── SVG Remoulding Animation ──────────────────────────────────────────────────
-// Retreading process: stitcher roller pastes rubber strip onto buffed carcass.
-// rubber-fill and stitcher-group both animate over 5s linear so they stay in sync.
-// Circumference at r=100.5 ≈ 632; at r=114 ≈ 716.
+// Retreading: stitcher roller pastes rubber strip onto buffed carcass.
+// Uses stroke-dashoffset (NOT stroke-dasharray) animation — far more reliable.
+// Circumference r=100.5 ≈ 632; r=113.5 ≈ 713.
+// strokeDasharray is set as an SVG attribute so browsers see the initial value.
 
 const RemouldinAnimationSVG = ({ className = '' }) => {
   const cx = 120, cy = 120;
@@ -122,34 +123,38 @@ const RemouldinAnimationSVG = ({ className = '' }) => {
       {/* Tyre body */}
       <circle cx={cx} cy={cy} r="116" fill="#1A1A1A" />
 
-      {/* Bare buffed tread zone — slightly lighter than body */}
-      <circle cx={cx} cy={cy} r="100.5" fill="none" stroke="#252525" strokeWidth="27" />
+      {/* Bare buffed tread zone */}
+      <circle cx={cx} cy={cy} r="100.5" fill="none" stroke="#2A2A2A" strokeWidth="27" />
 
-      {/* Buffed surface radial scratch lines */}
+      {/* Buffed surface scratch lines — fade out as rubber covers them */}
       {buffLines.map((l, i) => (
         <line key={i} x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2}
-          stroke="#333" strokeWidth="0.8" className="buff-line" />
+          stroke="#404040" strokeWidth="1" className="buff-line" />
       ))}
 
-      {/* Rubber compound arc — grows clockwise from 3 o'clock behind the roller */}
+      {/* Rubber compound — grows clockwise; dashoffset 632→0 reveals the arc */}
       <circle cx={cx} cy={cy} r="100.5" fill="none"
-        stroke="#6B3200" strokeWidth="27" className="rubber-fill" />
+        stroke="#A05A00" strokeWidth="27"
+        strokeDasharray="632 9999"
+        className="rubber-fill" />
 
-      {/* Sheen highlight on freshly applied rubber (outer edge) */}
+      {/* Freshly-applied rubber sheen on outer edge */}
       <circle cx={cx} cy={cy} r="113.5" fill="none"
-        stroke="#8B4500" strokeWidth="3" className="rubber-sheen" />
+        stroke="#C07800" strokeWidth="4"
+        strokeDasharray="713 9999"
+        className="rubber-sheen" />
 
-      {/* Stitcher roller group — rotates in lockstep with rubber fill */}
+      {/* Stitcher roller group — stays locked to the leading edge of the fill */}
       <g className="stitcher-group">
-        {/* Rubber strip feeding in from outside the tyre */}
-        <line x1={cx + 126} y1={cy} x2={cx + 117} y2={cy}
-          stroke="#6B3200" strokeWidth="7" strokeLinecap="round" />
-        {/* Stitcher roller */}
-        <circle cx={cx + 117} cy={cy} r="6" fill="#555" stroke="#888" strokeWidth="1.5" />
-        <circle cx={cx + 117} cy={cy} r="2.5" fill="#2A2A2A" />
-        {/* Pressure glow ring */}
-        <circle cx={cx + 117} cy={cy} r="9" fill="none"
-          stroke="#F5A623" strokeWidth="1.2" className="stitcher-glow" />
+        {/* Rubber strip feeding from outside */}
+        <line x1={cx + 126} y1={cy} x2={cx + 116} y2={cy}
+          stroke="#A05A00" strokeWidth="8" strokeLinecap="round" />
+        {/* Roller body */}
+        <circle cx={cx + 116} cy={cy} r="7" fill="#555" stroke="#999" strokeWidth="1.5" />
+        <circle cx={cx + 116} cy={cy} r="2.5" fill="#2A2A2A" />
+        {/* Pressure contact glow */}
+        <circle cx={cx + 116} cy={cy} r="10" fill="none"
+          stroke="#F5A623" strokeWidth="1.5" className="stitcher-glow" />
       </g>
 
       {/* Sidewall */}
