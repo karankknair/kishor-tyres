@@ -6,8 +6,8 @@
 }
 
 @keyframes treadScroll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  from { background-position: 0 0; }
+  to   { background-position: -96px 0; }
 }
 
 @keyframes fadeInUp {
@@ -25,34 +25,16 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Retreading Scene Animation ──────────────────────────────────────────────── */
+/* ── Hero Tyre Animation ─────────────────────────────────────────────────────── */
 
 @keyframes tyreRotate {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
 
-@keyframes treadStamp {
-  0%    { opacity: 0; transform: scaleY(0.2); }
-  18%   { opacity: 1; transform: scaleY(1.08); }
-  30%   { opacity: 1; transform: scaleY(1); }
-  78%   { opacity: 1; transform: scaleY(1); }
-  100%  { opacity: 0; transform: scaleY(1); }
-}
-
-@keyframes pressDown {
-  0%, 100% { transform: translateY(-7px); }
-  50%      { transform: translateY(5px); }
-}
-
-@keyframes steamRise {
-  0%   { transform: translateY(0) scaleX(1);   opacity: 0.7; }
-  100% { transform: translateY(-38px) scaleX(1.6); opacity: 0; }
-}
-
-@keyframes pressGlow {
-  0%, 100% { opacity: 0.55; }
-  50%      { opacity: 1; }
+@keyframes ringPulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50%      { opacity: 0.7; transform: scale(1.04); }
 }
 
 @keyframes blink {
@@ -60,55 +42,83 @@
   50%      { opacity: 0.1; }
 }
 
-/* Scene container */
-.retreading-scene {
+.hero-tyre-wrap {
   position: relative;
-  width: 100%;
-  height: 100%;
+  width: 320px;
+  height: 320px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.scene-ambient {
+.tyre-ambient {
   position: absolute;
-  inset: -30px;
-  background: radial-gradient(ellipse at 50% 55%, rgba(42,26,0,0.75) 0%, rgba(13,13,13,0) 65%);
+  inset: -40px;
+  background: radial-gradient(ellipse at center, rgba(245,166,35,0.12) 0%, rgba(13,13,13,0) 70%);
   pointer-events: none;
 }
 
-.scene-svg { width: 100%; height: 100%; display: block; overflow: visible; }
-
-/* Layer 1 — tyre rotates */
-.tyre-carcass {
-  transform-origin: 160px 174px;
-  animation: tyreRotate 6s linear infinite;
+.glow-ring {
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(245,166,35,0.25);
+  animation: ringPulse 2s ease-in-out infinite;
+  pointer-events: none;
 }
 
-/* Sidewall text */
-.sidewall-text {
-  font-family: 'Poppins', 'Inter', sans-serif;
-  font-size: 5.5px;
-  fill: #4A4A4A;
-  letter-spacing: 1px;
+.glow-ring-2 {
+  width: 400px;
+  height: 400px;
+  border-color: rgba(245,166,35,0.12);
+  animation-delay: 0.5s;
+}
+
+.tyre-image {
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  object-fit: cover;
+  animation: tyreRotate 12s linear infinite;
+  filter: brightness(0.75) contrast(1.2);
+  border: 4px solid #F5A623;
+  box-shadow:
+    0 0 0 8px rgba(245,166,35,0.1),
+    0 0 60px rgba(245,166,35,0.3),
+    0 0 120px rgba(245,166,35,0.1);
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+.live-badge {
+  position: absolute;
+  top: 20px;
+  right: 10px;
+  background: rgba(20,20,20,0.85);
+  border: 1px solid rgba(245,166,35,0.4);
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 0.65rem;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
+  color: #F5A623;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 2;
+  backdrop-filter: blur(8px);
 }
 
-/* Layer 2 — tread lugs stamp in */
-.tread-lug {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: treadStamp 3s ease-out infinite;
-}
-
-/* Layer 3 — press bounces */
-.press-element { animation: pressDown 2s ease-in-out infinite; }
-.press-heat    { animation: pressGlow 1s ease-in-out infinite; }
-
-/* Layer 4 — steam */
-.steam-wisp {
-  transform-origin: center bottom;
-  animation: steamRise 2s ease-in infinite;
+.live-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #FF3B30;
+  flex-shrink: 0;
+  animation: blink 1.2s ease-in-out infinite;
 }
 
 /* ── Loading ─────────────────────────────────────────────────────────────────── */
@@ -203,7 +213,7 @@
   transition: background 0.25s, transform 0.25s;
 }
 
-.btn-gold:hover { background: #D4860A; transform: translateY(-2px); }
+.btn-gold:hover { background: #D4860A; transform: translateY(-2px) scale(1.03); }
 
 .btn-gold.btn-full { width: 100%; text-align: center; display: block; padding: 1rem; }
 
@@ -221,7 +231,7 @@
   transition: background 0.25s, color 0.25s, transform 0.25s;
 }
 
-.btn-outline:hover { background: #F5A623; color: #0D0D0D; transform: translateY(-2px); }
+.btn-outline:hover { background: #F5A623; color: #0D0D0D; transform: translateY(-2px) scale(1.03); }
 
 .pulse-glow { animation: pulseGlow 2s ease-in-out infinite; }
 
@@ -400,9 +410,14 @@
 
 /* Two-row tread track — rows scroll in opposite directions for depth */
 .tread-track {
-  width: 200%;
   height: 18px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 18'%3E%3Crect width='96' height='18' fill='%230F0F0F'/%3E%3Cpolygon points='4,0 22,0 20,18 2,18' fill='%23F5A623'/%3E%3Cpolygon points='26,0 30,0 28,18 24,18' fill='%232A2A2A'/%3E%3Cpolygon points='34,0 44,0 42,18 32,18' fill='%23D4860A'/%3E%3Cpolygon points='50,0 62,0 60,18 48,18' fill='%23F5A623'/%3E%3Cpolygon points='66,0 70,0 68,18 64,18' fill='%23272727'/%3E%3Cpolygon points='74,0 88,0 86,18 72,18' fill='%23D4860A'/%3E%3C/svg%3E");
+  background-image: repeating-linear-gradient(
+    105deg,
+    #F5A623 0px,  #F5A623 14px,
+    #0F0F0F 14px, #0F0F0F 20px,
+    #D4860A 20px, #D4860A 34px,
+    #0F0F0F 34px, #0F0F0F 40px
+  );
   background-size: 96px 18px;
   background-repeat: repeat-x;
 }
@@ -497,6 +512,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: visible;
   animation: fadeInUp 0.8s ease 0.2s both;
 }
 

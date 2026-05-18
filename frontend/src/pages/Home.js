@@ -101,123 +101,25 @@ const TyreSVG = ({ className = '' }) => {
   );
 };
 
-// ── Retreading Scene ──────────────────────────────────────────────────────────
-// Dark industrial hero: tyre carcass rotates, amber lugs stamp in progressively,
-// a mould press bounces at the contact point, golden steam rises.
+// ── Hero Tyre (real photo, circular, rotating) ────────────────────────────────
 
-const RetreadingScene = () => {
-  const CX = 160, CY = 174;
-
-  const lugs = Array.from({ length: 14 }, (_, i) => {
-    const base = (i * (360 / 14) - 90) * Math.PI / 180;
-    const skew = 5 * Math.PI / 180;
-    const r1 = 104, r2 = 118;
-    const wa = 7 * Math.PI / 180;
-    return {
-      pts: [
-        `${(CX + r1 * Math.cos(base - wa)).toFixed(2)},${(CY + r1 * Math.sin(base - wa)).toFixed(2)}`,
-        `${(CX + r2 * Math.cos(base - wa + skew)).toFixed(2)},${(CY + r2 * Math.sin(base - wa + skew)).toFixed(2)}`,
-        `${(CX + r2 * Math.cos(base + wa + skew)).toFixed(2)},${(CY + r2 * Math.sin(base + wa + skew)).toFixed(2)}`,
-        `${(CX + r1 * Math.cos(base + wa)).toFixed(2)},${(CY + r1 * Math.sin(base + wa)).toFixed(2)}`,
-      ].join(' '),
-      delay: (i * 0.15).toFixed(2),
-    };
-  });
-
-  return (
-    <div className="retreading-scene">
-      <div className="scene-ambient" />
-      <svg className="scene-svg" viewBox="0 0 320 320" fill="none" aria-hidden="true">
-        <defs>
-          <linearGradient id="lugGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#F5A623" />
-            <stop offset="100%" stopColor="#9A5000" />
-          </linearGradient>
-        </defs>
-
-        {/* ── Layer 1: Tyre carcass — rotates slowly ── */}
-        <g className="tyre-carcass">
-          <circle cx={CX} cy={CY} r="118" fill="#141414" />
-          <circle cx={CX} cy={CY} r="118" fill="none" stroke="#1E1E1E" strokeWidth="8" />
-          {/* Buffed tread zone */}
-          <circle cx={CX} cy={CY} r="111" fill="none" stroke="#1A1A1A" strokeWidth="14" />
-          <circle cx={CX} cy={CY} r="103.5" fill="none" stroke="#2D2D2D" strokeWidth="0.8" />
-          <circle cx={CX} cy={CY} r="118"   fill="none" stroke="#2D2D2D" strokeWidth="0.8" />
-          {/* Buffed scratch texture */}
-          {Array.from({ length: 44 }, (_, i) => {
-            const a = (i * (360 / 44)) * Math.PI / 180;
-            return (
-              <line key={i}
-                x1={(CX + 105 * Math.cos(a)).toFixed(1)} y1={(CY + 105 * Math.sin(a)).toFixed(1)}
-                x2={(CX + 117 * Math.cos(a)).toFixed(1)} y2={(CY + 117 * Math.sin(a)).toFixed(1)}
-                stroke="#262626" strokeWidth="1"
-              />
-            );
-          })}
-          {/* Sidewall */}
-          <circle cx={CX} cy={CY} r="98" fill="#0F0F0F" stroke="#1D1D1D" strokeWidth="2" />
-          {/* Rim seating */}
-          <circle cx={CX} cy={CY} r="74" fill="#0D0D0D" stroke="#222" strokeWidth="1.5" />
-          {/* Sidewall text — invisible guide path + text */}
-          <path id="swPath"
-            d={`M ${CX},${CY} m -91,0 a 91,91 0 1,1 182,0 a 91,91 0 1,1 -182,0`}
-            visibility="hidden"
-          />
-          <text className="sidewall-text">
-            <textPath href="#swPath" startOffset="12%">
-              KISHOR TYRE REMOULDING WORKS • PANDHARPUR •
-            </textPath>
-          </text>
-          {/* ── Layer 2: Tread lugs — stamp in with stagger ── */}
-          {lugs.map((lug, i) => (
-            <polygon
-              key={i}
-              points={lug.pts}
-              fill="url(#lugGrad)"
-              className="tread-lug"
-              style={{ animationDelay: `${lug.delay}s` }}
-            />
-          ))}
-        </g>
-
-        {/* ── Layer 3: Press / mould — fixed, bounces at top ── */}
-        <g className="press-element">
-          <rect x="88" y="4" width="144" height="48" rx="6" fill="#222" stroke="#383838" strokeWidth="1.5" />
-          {Array.from({ length: 8 }, (_, i) => (
-            <line key={i}
-              x1={98 + i * 16} y1="4" x2={98 + i * 16} y2="52"
-              stroke="#2E2E2E" strokeWidth="1"
-            />
-          ))}
-          <rect x="88"  y="46" width="144" height="12" rx="2" fill="#1C1C1C" stroke="#3A3A3A" strokeWidth="1" />
-          {/* Heating element glow */}
-          <rect x="92"  y="50" width="136" height="6"  rx="2" fill="#F5A623" className="press-heat" />
-          <rect x="82"  y="42" width="8"   height="18" rx="3" fill="#333" stroke="#444" strokeWidth="1" />
-          <rect x="230" y="42" width="8"   height="18" rx="3" fill="#333" stroke="#444" strokeWidth="1" />
-        </g>
-
-        {/* ── Layer 4: Steam wisps — rise from press contact ── */}
-        {[
-          { x: CX - 16, delay: 0 },
-          { x: CX - 4,  delay: 0.55 },
-          { x: CX + 10, delay: 1.1 },
-          { x: CX + 22, delay: 1.65 },
-        ].map((s, i) => (
-          <path
-            key={i}
-            d={`M ${s.x} 56 Q ${s.x + 7} 38, ${s.x - 2} 22 Q ${s.x - 8} 8, ${s.x + 4} -2`}
-            fill="none"
-            stroke="rgba(245,166,35,0.4)"
-            strokeWidth="3.5"
-            strokeLinecap="round"
-            className="steam-wisp"
-            style={{ animationDelay: `${s.delay}s` }}
-          />
-        ))}
-      </svg>
+const HeroTyre = () => (
+  <div className="hero-tyre-wrap">
+    <div className="tyre-ambient" />
+    <div className="glow-ring" />
+    <div className="glow-ring glow-ring-2" />
+    <img
+      src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"
+      alt="Tyre tread close-up"
+      className="tyre-image"
+      draggable="false"
+    />
+    <div className="live-badge">
+      <span className="live-badge-dot" aria-hidden="true" />
+      Live Remoulding
     </div>
-  );
-};
+  </div>
+);
 
 // ── Header ────────────────────────────────────────────────────────────────────
 
@@ -348,7 +250,7 @@ const HeroSection = ({ companyInfo }) => {
         </div>
 
         <div className="hero-visual">
-          <RetreadingScene />
+          <HeroTyre />
         </div>
       </div>
 
