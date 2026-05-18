@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { publicAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import kishorLogo from '../kishor_logo.svg';
+import { t } from '../i18n/translations';
 import './Home.css';
 
 // ── Hooks ─────────────────────────────────────────────────────────────────────
@@ -41,6 +42,77 @@ const useCounter = (target, active, duration = 1800) => {
   return val;
 };
 
+// ── Hero Tyre SVG ─────────────────────────────────────────────────────────────
+
+const HeroTyre = () => (
+  <div className="hero-tyre-wrapper">
+    <svg
+      viewBox="0 0 280 280"
+      width="280"
+      height="280"
+      className="hero-tyre-svg"
+      style={{ animation: 'heroTyreSpin 8s linear infinite' }}
+    >
+      <circle cx="140" cy="140" r="130" fill="#1A1A1A" />
+
+      {Array.from({ length: 24 }).map((_, i) => {
+        const angle = (i * 360) / 24;
+        const rad = (angle * Math.PI) / 180;
+        const x = 140 + 118 * Math.cos(rad);
+        const y = 140 + 118 * Math.sin(rad);
+        return (
+          <rect
+            key={i}
+            x="-10" y="-7" width="20" height="14" rx="2"
+            fill={i % 3 === 0 ? '#F5A800' : '#2A2A2A'}
+            stroke="#111" strokeWidth="1"
+            transform={`translate(${x}, ${y}) rotate(${angle + 90})`}
+          />
+        );
+      })}
+
+      <circle cx="140" cy="140" r="100" fill="none" stroke="#111111" strokeWidth="3" />
+      <circle cx="140" cy="140" r="95"  fill="none" stroke="#2A2A2A" strokeWidth="1" />
+
+      {Array.from({ length: 16 }).map((_, i) => {
+        const angle = (i * 360) / 16 + 11.25;
+        const rad = (angle * Math.PI) / 180;
+        const x = 140 + 97 * Math.cos(rad);
+        const y = 140 + 97 * Math.sin(rad);
+        return (
+          <rect
+            key={i}
+            x="-6" y="-4" width="12" height="8" rx="1"
+            fill={i % 2 === 0 ? '#C88A00' : '#1A1A1A'}
+            stroke="#111" strokeWidth="0.5"
+            transform={`translate(${x}, ${y}) rotate(${angle + 90})`}
+          />
+        );
+      })}
+
+      <circle cx="140" cy="140" r="88" fill="#111111" />
+      <circle cx="140" cy="140" r="82" fill="none" stroke="#F5A800" strokeWidth="2" />
+      <circle cx="140" cy="140" r="78" fill="#1A1A1A" />
+
+      {Array.from({ length: 5 }).map((_, i) => {
+        const angle = (i * 72 * Math.PI) / 180;
+        return (
+          <line
+            key={i}
+            x1="140" y1="140"
+            x2={140 + 72 * Math.cos(angle)}
+            y2={140 + 72 * Math.sin(angle)}
+            stroke="#2A2A2A" strokeWidth="6" strokeLinecap="round"
+          />
+        );
+      })}
+
+      <circle cx="140" cy="140" r="14" fill="#1A1A1A" stroke="#F5A800" strokeWidth="2" />
+      <circle cx="140" cy="140" r="6"  fill="#F5A800" />
+    </svg>
+  </div>
+);
+
 // ── Loading Screen ────────────────────────────────────────────────────────────
 
 const LoadingScreen = ({ onDone }) => (
@@ -61,9 +133,10 @@ const LoadingScreen = ({ onDone }) => (
 
 // ── Header ────────────────────────────────────────────────────────────────────
 
-const Header = ({ user }) => {
+const Header = ({ user, lang, setLang }) => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const tr = t[lang];
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 50);
@@ -81,15 +154,22 @@ const Header = ({ user }) => {
         </Link>
 
         <nav className={`main-nav${menuOpen ? ' open' : ''}`}>
-          <a href="#about" onClick={close}>About</a>
-          <Link to="/services" onClick={close}>Services</Link>
-          <a href="#tyre-sizes" onClick={close}>Tyre Sizes</a>
-          <a href="#gallery" onClick={close}>Gallery</a>
-          <a href="#testimonials" onClick={close}>Reviews</a>
-          <a href="#contact" onClick={close}>Contact</a>
+          <a href="#about" onClick={close}>{tr.nav_about}</a>
+          <Link to="/services" onClick={close}>{tr.nav_services}</Link>
+          <a href="#tyre-sizes" onClick={close}>{tr.nav_sizes}</a>
+          <a href="#gallery" onClick={close}>{tr.nav_gallery}</a>
+          <a href="#testimonials" onClick={close}>{tr.nav_reviews}</a>
+          <a href="#contact" onClick={close}>{tr.nav_contact}</a>
         </nav>
 
         <div className="header-right">
+          <button
+            className="lang-toggle"
+            onClick={() => setLang(lang === 'en' ? 'mr' : 'en')}
+            aria-label="Toggle language"
+          >
+            {lang === 'en' ? 'मराठी' : 'English'}
+          </button>
           {user ? (
             <Link
               to={(user.user_type === 'admin' || user.is_staff) ? '/admin' : '/profile'}
@@ -116,11 +196,13 @@ const Header = ({ user }) => {
 
 // ── Hero ──────────────────────────────────────────────────────────────────────
 
-const HeroSection = ({ companyInfo }) => {
+const HeroSection = ({ companyInfo, lang }) => {
   const [statsRef, statsInView] = useInView(0.3);
   const c1 = useCounter(50, statsInView);
   const c2 = useCounter(10000, statsInView);
   const c3 = useCounter(500, statsInView);
+  const tr = t[lang];
+  const headlineLines = tr.hero_headline.split('\n');
 
   return (
     <section className="hero-section">
@@ -131,43 +213,44 @@ const HeroSection = ({ companyInfo }) => {
             Est. {companyInfo?.established_year || 1995} — Pandharpur, Maharashtra
           </p>
           <h1 className="hero-headline">
-            <span className="headline-word">360° TYRE CARE</span><br />
-            <span className="headline-word" style={{ animationDelay: '0.08s' }}>SOLUTIONS</span>
+            <span className="headline-word">{headlineLines[0]}</span><br />
+            <span className="headline-word" style={{ animationDelay: '0.08s' }}>{headlineLines[1]}</span>
           </h1>
-          <span className="hero-stamp">Only Available at Kishor Tyre Remoulding Works</span>
-          <p className="hero-desc">
-            Premium pre-cure &amp; mold-cure remoulding for tractors,
-            trucks, JCBs and more. Trusted quality by <strong>Kishor K Nair</strong> (B.E. Prod, MBA).
-          </p>
+          <div className="exclusive-badge">
+            <span className="badge-star">★</span>
+            <span className="badge-text">{tr.hero_exclusive}</span>
+            <span className="badge-star">★</span>
+          </div>
+          <p className="hero-desc">{tr.hero_sub}</p>
           <div className="hero-btns">
-            <a href="#contact" className="btn-gold pulse-glow">Get a Quote</a>
-            <a href="#tyre-sizes" className="btn-outline">View Sizes</a>
+            <a href="#contact" className="btn-gold pulse-glow">{tr.hero_cta1}</a>
+            <a href="#tyre-sizes" className="btn-outline">{tr.hero_cta2}</a>
           </div>
         </div>
         <div className="hero-tyre-wrap">
           <div className="tyre-ambient" />
           <div className="glow-ring" />
           <div className="glow-ring glow-ring-2" />
-          <div className="hero-tyre" />
+          <HeroTyre />
         </div>
       </div>
 
       <div className="hero-stats" ref={statsRef}>
         <div className="stat-card">
           <span className="stat-num">{c1}+</span>
-          <span className="stat-lbl">Years Experience</span>
+          <span className="stat-lbl">{tr.stats_exp}</span>
           <div className={`stat-bar${statsInView ? ' fill' : ''}`} />
         </div>
         <div className="stat-sep" />
         <div className="stat-card">
           <span className="stat-num">{c2 >= 10000 ? '10,000' : c2.toLocaleString()}+</span>
-          <span className="stat-lbl">Tyres Remoulded</span>
+          <span className="stat-lbl">{tr.stats_tyres}</span>
           <div className={`stat-bar${statsInView ? ' fill' : ''}`} />
         </div>
         <div className="stat-sep" />
         <div className="stat-card">
           <span className="stat-num">{c3}+</span>
-          <span className="stat-lbl">Satisfied Clients</span>
+          <span className="stat-lbl">{tr.stats_clients}</span>
           <div className={`stat-bar${statsInView ? ' fill' : ''}`} />
         </div>
       </div>
@@ -223,7 +306,7 @@ const TAB_LABELS = {
   mini_truck: 'Mini Truck',
 };
 
-const TyreSizesSection = () => {
+const TyreSizesSection = ({ lang }) => {
   const [grouped, setGrouped] = useState({});
   const [activeTab, setActiveTab] = useState('');
   const [ref, inView] = useInView(0.1);
@@ -251,15 +334,16 @@ const TyreSizesSection = () => {
 
   const tabs = Object.keys(grouped);
   const sizes = grouped[activeTab] || [];
+  const tr = t[lang];
 
   return (
     <section id="tyre-sizes" className="sizes-section">
       <div className="section-wrap">
         <div className="section-head">
-          <h2 className="section-title">Available Tyre Sizes</h2>
+          <h2 className="section-title">{tr.sizes_title}</h2>
           <div className="section-rule" />
         </div>
-        <p className="section-sub">Quality remoulded tyres for every vehicle category</p>
+        <p className="section-sub">{tr.sizes_sub}</p>
 
         {tabs.length > 0 ? (
           <>
@@ -391,7 +475,7 @@ const TestimonialsSection = ({ testimonials }) => {
 
 // ── Contact ───────────────────────────────────────────────────────────────────
 
-const ContactSection = ({ companyInfo }) => {
+const ContactSection = ({ companyInfo, lang }) => {
   const [fields, setFields] = useState({ name: '', email: '', phone: '', message: '' });
   const [focused, setFocused] = useState({});
 
@@ -399,12 +483,13 @@ const ContactSection = ({ companyInfo }) => {
   const focus = e => setFocused(p => ({ ...p, [e.target.name]: true }));
   const blur = e => setFocused(p => ({ ...p, [e.target.name]: false }));
   const floated = name => focused[name] || !!fields[name];
+  const tr = t[lang];
 
   return (
     <section id="contact" className="contact-section">
       <div className="section-wrap">
         <div className="section-head">
-          <h2 className="section-title">Get In Touch</h2>
+          <h2 className="section-title">{tr.contact_title}</h2>
           <div className="section-rule" />
         </div>
         <p className="section-sub">Contact us for quotes and enquiries</p>
@@ -433,9 +518,9 @@ const ContactSection = ({ companyInfo }) => {
 
           <form className="contact-form" onSubmit={e => e.preventDefault()}>
             {[
-              { name: 'name', label: 'Your Name', type: 'text' },
-              { name: 'email', label: 'Email Address', type: 'email' },
-              { name: 'phone', label: 'Phone Number', type: 'tel' },
+              { name: 'name', label: tr.contact_name, type: 'text' },
+              { name: 'email', label: tr.contact_email, type: 'email' },
+              { name: 'phone', label: tr.contact_phone, type: 'tel' },
             ].map(f => (
               <div key={f.name} className={`float-field${floated(f.name) ? ' floated' : ''}`}>
                 <input type={f.type} name={f.name} value={fields[f.name]}
@@ -446,9 +531,9 @@ const ContactSection = ({ companyInfo }) => {
             <div className={`float-field textarea-wrap${floated('message') ? ' floated' : ''}`}>
               <textarea name="message" rows={5} value={fields.message}
                 onChange={change} onFocus={focus} onBlur={blur} />
-              <label>Your Message</label>
+              <label>{tr.contact_msg}</label>
             </div>
-            <button type="submit" className="btn-gold btn-full">Send Message</button>
+            <button type="submit" className="btn-gold btn-full">{tr.contact_submit}</button>
           </form>
         </div>
       </div>
@@ -458,7 +543,7 @@ const ContactSection = ({ companyInfo }) => {
 
 // ── Footer ────────────────────────────────────────────────────────────────────
 
-const Footer = ({ companyInfo }) => (
+const Footer = ({ companyInfo, lang }) => (
   <footer className="site-footer">
     <div className="footer-grid">
       <div className="footer-brand">
@@ -489,7 +574,7 @@ const Footer = ({ companyInfo }) => (
     </div>
     <div className="footer-bottom">
       <div className="footer-rule" />
-      <p>© {new Date().getFullYear()} Kishor Tyre Remoulding Works. All rights reserved.</p>
+      <p>{t[lang].footer_copy}</p>
     </div>
   </footer>
 );
@@ -502,6 +587,9 @@ const Home = () => {
   const [testimonials, setTestimonials] = useState([]);
   const [gallery, setGallery] = useState([]);
   const [showLoader, setShowLoader] = useState(true);
+  const [lang, setLang] = useState(() => localStorage.getItem('lang') || 'en');
+
+  useEffect(() => { localStorage.setItem('lang', lang); }, [lang]);
 
   useEffect(() => {
     Promise.all([
@@ -509,9 +597,9 @@ const Home = () => {
       publicAPI.getTestimonials(),
       publicAPI.getGallery(),
     ])
-      .then(([c, t, g]) => {
+      .then(([c, tData, g]) => {
         setCompanyInfo(c.data);
-        setTestimonials(t.data);
+        setTestimonials(tData.data);
         setGallery(g.data);
       })
       .catch(() => {});
@@ -522,15 +610,15 @@ const Home = () => {
   }
 
   return (
-    <div className="home-page">
-      <Header user={user} />
-      <HeroSection companyInfo={companyInfo} />
+    <div className={`home-page${lang === 'mr' ? ' marathi' : ''}`}>
+      <Header user={user} lang={lang} setLang={setLang} />
+      <HeroSection companyInfo={companyInfo} lang={lang} />
       <WhySection />
-      <TyreSizesSection />
+      <TyreSizesSection lang={lang} />
       <GallerySection gallery={gallery} />
       <TestimonialsSection testimonials={testimonials} />
-      <ContactSection companyInfo={companyInfo} />
-      <Footer companyInfo={companyInfo} />
+      <ContactSection companyInfo={companyInfo} lang={lang} />
+      <Footer companyInfo={companyInfo} lang={lang} />
     </div>
   );
 };

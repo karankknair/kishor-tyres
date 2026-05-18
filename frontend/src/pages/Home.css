@@ -48,40 +48,17 @@
   flex-shrink: 0;
 }
 
-/* Pure CSS rotating tyre — right side of hero */
-.hero-tyre {
-  width: 280px;
-  height: 280px;
-  border-radius: 50%;
-  position: relative;
-  animation: heroTyreSpin 8s linear infinite;
+/* SVG rotating tyre — right side of hero */
+.hero-tyre-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
-.hero-tyre::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 48px solid #1A1A1A;
-  border-top-color: #F5A800;
-  border-right-color: #2A2A2A;
-  border-bottom-color: #C88A00;
-  border-left-color: #1A1A1A;
-  box-shadow:
-    inset 0 0 20px rgba(0,0,0,0.8),
-    0 0 0 4px #2A2A2A,
-    0 0 0 6px #F5A800;
-}
-
-.hero-tyre::after {
-  content: '';
-  position: absolute;
-  inset: 68px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #2A2A2A 0%, #111111 100%);
-  border: 3px solid #F5A800;
-  box-shadow: inset 0 0 16px rgba(0,0,0,0.9);
+.hero-tyre-svg {
+  display: block;
+  filter: drop-shadow(0 0 24px rgba(245,168,0,0.25));
 }
 
 @keyframes heroTyreSpin {
@@ -567,17 +544,63 @@
   filter: none;
 }
 
-.hero-stamp {
-  display: block;
+.exclusive-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(245,168,0,0.08);
+  border: 1px solid #F5A800;
+  border-left: 4px solid #F5A800;
+  padding: 10px 20px;
+  margin: 16px 0 24px;
+  border-radius: 4px;
+}
+
+.badge-text {
   color: #F5A800;
-  font-family: 'Oswald', sans-serif;
-  font-weight: 400;
-  font-size: 18px;
+  font-size: 14px;
+  font-weight: 600;
   letter-spacing: 1px;
-  padding: 8px 0;
-  border-top: 1px solid #F5A800;
-  border-bottom: 1px solid #F5A800;
-  margin: 20px 0;
+  text-transform: uppercase;
+  font-family: 'Oswald', sans-serif;
+}
+
+.badge-star {
+  color: #F5A800;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* Language toggle button */
+.lang-toggle {
+  background: transparent;
+  border: 1px solid #F5A623;
+  color: #F5A623;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.lang-toggle:hover {
+  background: #F5A623;
+  color: #111111;
+}
+
+/* Marathi / Devanagari font override */
+.marathi,
+.marathi .hero-eyebrow,
+.marathi .hero-desc,
+.marathi .badge-text,
+.marathi .section-sub,
+.marathi .main-nav a,
+.marathi .footer-col a,
+.marathi .footer-col p {
+  font-family: 'Noto Sans Devanagari', 'Inter', sans-serif;
 }
 
 .hero-desc {
@@ -1087,9 +1110,7 @@
 @media (max-width: 1024px) {
   .hero-inner { gap: 2.5rem; padding: 100px 32px 60px; }
   .hero-tyre-wrap { width: 240px; height: 240px; }
-  .hero-tyre { width: 200px; height: 200px; }
-  .hero-tyre::before { border-width: 35px; }
-  .hero-tyre::after { inset: 49px; }
+  .hero-tyre-wrapper svg { width: 200px; height: 200px; }
   .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
   .features-grid { grid-template-columns: repeat(2, 1fr); }
   .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
@@ -1133,7 +1154,9 @@
   .hero-btns { justify-content: center; flex-direction: column; }
   .hero-btns a, .hero-btns .btn-gold, .hero-btns .btn-outline { width: 100%; text-align: center; }
   .hero-tyre-wrap { display: none; }
-  .hero-stamp { font-size: 14px; }
+  .hero-tyre-wrapper { display: none; }
+  .exclusive-badge { font-size: 12px; padding: 8px 14px; gap: 8px; }
+  .badge-text { font-size: 12px; }
 
   /* Stats — single column */
   .hero-stats { flex-direction: column; gap: 1.5rem; padding: 2rem 1rem; margin-top: 0; }
