@@ -25,52 +25,91 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Retreading rubber-application animation
-   Uses stroke-dashoffset (not stroke-dasharray) for reliable cross-browser support.
-   strokeDasharray is set as an SVG attribute on each element.
-   Circumference: r=100.5 → 632  |  r=113.5 → 713
-   All three key animations use identical 5s linear timing so the stitcher
-   stays locked to the rubber's leading edge throughout. */
+/* ── Retreading Scene Animation ──────────────────────────────────────────────── */
 
-@keyframes rubberFill {
-  0%    { stroke-dashoffset: 632; opacity: 1; }
-  84%   { stroke-dashoffset: 0;   opacity: 1; }
-  93%   { stroke-dashoffset: 0;   opacity: 0; }
-  100%  { stroke-dashoffset: 632; opacity: 0; }
+@keyframes tyreRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
-@keyframes rubberSheen {
-  0%    { stroke-dashoffset: 713; opacity: 0; }
-  5%    { opacity: 0.7; }
-  84%   { stroke-dashoffset: 0;   opacity: 0.7; }
-  93%   { stroke-dashoffset: 0;   opacity: 0; }
-  100%  { stroke-dashoffset: 713; opacity: 0; }
+@keyframes treadStamp {
+  0%    { opacity: 0; transform: scaleY(0.2); }
+  18%   { opacity: 1; transform: scaleY(1.08); }
+  30%   { opacity: 1; transform: scaleY(1); }
+  78%   { opacity: 1; transform: scaleY(1); }
+  100%  { opacity: 0; transform: scaleY(1); }
 }
 
-@keyframes stitcherRotate {
-  0%    { transform: rotate(0deg);   opacity: 1; }
-  84%   { transform: rotate(360deg); opacity: 1; }
-  93%   { transform: rotate(360deg); opacity: 0; }
-  100%  { transform: rotate(0deg);   opacity: 0; }
+@keyframes pressDown {
+  0%, 100% { transform: translateY(-7px); }
+  50%      { transform: translateY(5px); }
 }
 
-@keyframes buffFade {
-  0%    { opacity: 0; }
-  4%    { opacity: 1; }
-  84%   { opacity: 0; }
-  100%  { opacity: 0; }
+@keyframes steamRise {
+  0%   { transform: translateY(0) scaleX(1);   opacity: 0.7; }
+  100% { transform: translateY(-38px) scaleX(1.6); opacity: 0; }
 }
 
-@keyframes stitcherGlow {
-  0%, 100% { opacity: 0.3; }
+@keyframes pressGlow {
+  0%, 100% { opacity: 0.55; }
   50%      { opacity: 1; }
 }
 
-.rubber-fill    { animation: rubberFill 5s linear infinite; }
-.rubber-sheen   { animation: rubberSheen 5s linear infinite; }
-.buff-line      { animation: buffFade 5s ease-in-out infinite; }
-.stitcher-group { transform-origin: 120px 120px; animation: stitcherRotate 5s linear infinite; }
-.stitcher-glow  { animation: stitcherGlow 0.4s ease-in-out infinite; }
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.1; }
+}
+
+/* Scene container */
+.retreading-scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scene-ambient {
+  position: absolute;
+  inset: -30px;
+  background: radial-gradient(ellipse at 50% 55%, rgba(42,26,0,0.75) 0%, rgba(13,13,13,0) 65%);
+  pointer-events: none;
+}
+
+.scene-svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+/* Layer 1 — tyre rotates */
+.tyre-carcass {
+  transform-origin: 160px 174px;
+  animation: tyreRotate 6s linear infinite;
+}
+
+/* Sidewall text */
+.sidewall-text {
+  font-family: 'Poppins', 'Inter', sans-serif;
+  font-size: 5.5px;
+  fill: #4A4A4A;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Layer 2 — tread lugs stamp in */
+.tread-lug {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: treadStamp 3s ease-out infinite;
+}
+
+/* Layer 3 — press bounces */
+.press-element { animation: pressDown 2s ease-in-out infinite; }
+.press-heat    { animation: pressGlow 1s ease-in-out infinite; }
+
+/* Layer 4 — steam */
+.steam-wisp {
+  transform-origin: center bottom;
+  animation: steamRise 2s ease-in infinite;
+}
 
 /* ── Loading ─────────────────────────────────────────────────────────────────── */
 
@@ -94,7 +133,23 @@
 
 /* ── Global shared ───────────────────────────────────────────────────────────── */
 
-.home-page { background: #0D0D0D; overflow-x: hidden; }
+/* Noise/grain texture overlay — removes flat digital look */
+.home-page {
+  background: #0D0D0D;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.home-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
 
 .section-wrap {
   max-width: 1200px;
@@ -176,15 +231,17 @@
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 1000;
-  background: rgba(13,13,13,0.95);
-  border-bottom: 1px solid #2A2A2A;
-  transition: backdrop-filter 0.3s, background 0.3s, box-shadow 0.3s;
+  background: rgba(13,13,13,0.92);
+  border-bottom: 1px solid rgba(42,42,42,0.8);
+  transition: backdrop-filter 0.4s, background 0.4s, box-shadow 0.4s, border-color 0.4s;
 }
 
 .site-header.scrolled {
-  backdrop-filter: blur(18px);
-  background: rgba(13,13,13,0.7);
-  box-shadow: 0 4px 30px rgba(0,0,0,0.6);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  background: rgba(13,13,13,0.75);
+  box-shadow: 0 4px 40px rgba(0,0,0,0.7);
+  border-bottom-color: rgba(245,166,35,0.12);
 }
 
 .header-inner {
@@ -267,6 +324,21 @@
 
 .main-nav a:hover { color: #F5A623; border-bottom-color: #F5A623; }
 
+/* Amber underline slides in from left on hover */
+.main-nav a { position: relative; border-bottom: none !important; }
+.main-nav a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0;
+  width: 100%;
+  height: 2px;
+  background: #F5A623;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+.main-nav a:hover::after { transform: scaleX(1); }
+
 .header-right { display: flex; align-items: center; gap: 1rem; flex-shrink: 0; }
 
 .btn-account {
@@ -321,19 +393,22 @@
 .tread-bar {
   position: absolute;
   bottom: 0; left: 0; right: 0;
-  height: 22px;
+  height: 36px;
   overflow: hidden;
   z-index: 2;
 }
 
+/* Two-row tread track — rows scroll in opposite directions for depth */
 .tread-track {
   width: 200%;
-  height: 100%;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 22'%3E%3Crect width='80' height='22' fill='%23111111'/%3E%3Cpolygon points='0,0 4,0 3,22 0,22' fill='%232A2A2A'/%3E%3Cpolygon points='8,0 20,0 18,22 6,22' fill='%23F5A623'/%3E%3Cpolygon points='23,0 27,0 26,22 22,22' fill='%23272727'/%3E%3Cpolygon points='31,0 36,0 35,22 30,22' fill='%23D4860A'/%3E%3Cpolygon points='47,0 59,0 57,22 45,22' fill='%23F5A623'/%3E%3Cpolygon points='62,0 66,0 65,22 61,22' fill='%23272727'/%3E%3Cpolygon points='70,0 75,0 74,22 69,22' fill='%23D4860A'/%3E%3Cpolygon points='77,0 80,0 80,22 76,22' fill='%232A2A2A'/%3E%3C/svg%3E");
-  background-size: 80px 22px;
+  height: 18px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 18'%3E%3Crect width='96' height='18' fill='%230F0F0F'/%3E%3Cpolygon points='4,0 22,0 20,18 2,18' fill='%23F5A623'/%3E%3Cpolygon points='26,0 30,0 28,18 24,18' fill='%232A2A2A'/%3E%3Cpolygon points='34,0 44,0 42,18 32,18' fill='%23D4860A'/%3E%3Cpolygon points='50,0 62,0 60,18 48,18' fill='%23F5A623'/%3E%3Cpolygon points='66,0 70,0 68,18 64,18' fill='%23272727'/%3E%3Cpolygon points='74,0 88,0 86,18 72,18' fill='%23D4860A'/%3E%3C/svg%3E");
+  background-size: 96px 18px;
   background-repeat: repeat-x;
-  animation: treadScroll 10s linear infinite;
 }
+
+.tread-fwd { animation: treadScroll 8s linear infinite; }
+.tread-rev { animation: treadScroll 10s linear infinite reverse; opacity: 0.6; }
 
 .hero-inner {
   flex: 1;
@@ -358,6 +433,20 @@
   text-transform: uppercase;
   margin-bottom: 1rem;
   font-family: 'Inter', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+/* Blinking live indicator dot */
+.live-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #F5A623;
+  margin-right: 9px;
+  flex-shrink: 0;
+  animation: blink 1.6s ease-in-out infinite;
 }
 
 .hero-headline {
@@ -367,6 +456,17 @@
   color: #FFFFFF;
   margin-bottom: 1rem;
   letter-spacing: 2px;
+}
+
+/* Each headline word slides up independently */
+.headline-word {
+  display: inline-block;
+  animation: fadeInUp 0.7s ease both;
+}
+
+/* Amber text-shadow glow on REMOULDING */
+.headline-remoulding {
+  text-shadow: 0 0 40px rgba(245,166,35,0.45), 0 0 80px rgba(245,166,35,0.15);
 }
 
 .hero-sub {
@@ -392,23 +492,13 @@
 .hero-visual {
   flex-shrink: 0;
   position: relative;
-  width: 340px;
-  height: 340px;
+  width: 380px;
+  height: 380px;
   display: flex;
   align-items: center;
   justify-content: center;
   animation: fadeInUp 0.8s ease 0.2s both;
 }
-
-.tyre-glow-ring {
-  position: absolute;
-  width: 300px; height: 300px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(245,166,35,0.18) 0%, transparent 70%);
-  filter: blur(20px);
-}
-
-.hero-tyre { width: 280px; height: 280px; position: relative; z-index: 1; }
 
 .hero-stats {
   display: flex;
@@ -437,7 +527,55 @@
   display: block;
 }
 
-.stat-sep { width: 1px; height: 60px; background: #2A2A2A; flex-shrink: 0; }
+.stat-sep { width: 1px; height: 60px; background: #2A2A2A; flex-shrink: 0; transition: background 0.3s; }
+.stat-sep:hover { background: rgba(245,166,35,0.4); }
+
+/* Animated progress bar under each stat — fills on scroll-into-view */
+.stat-bar {
+  height: 2px;
+  background: #2A2A2A;
+  border-radius: 1px;
+  margin-top: 0.75rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.stat-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #D4860A, #F5A623);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1.8s cubic-bezier(0.22, 1, 0.36, 1);
+  border-radius: 1px;
+}
+
+.stat-bar.fill::after { transform: scaleX(1); }
+
+/* ── Section diagonal slash dividers ────────────────────────────────────────── */
+
+.why-section,
+.sizes-section,
+.gallery-section,
+.testimonials-section,
+.contact-section {
+  position: relative;
+}
+
+/* Amber diagonal slash at top of alternating sections */
+.why-section::before,
+.gallery-section::before,
+.contact-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, #F5A623 30%, #D4860A 70%, transparent 100%);
+  transform: skewY(-0.4deg);
+  transform-origin: left;
+  opacity: 0.5;
+}
 
 /* ── Why Choose Us ───────────────────────────────────────────────────────────── */
 
@@ -858,9 +996,8 @@
   .hero-inner { flex-direction: column; text-align: center; padding: 3rem 1.5rem 2rem; gap: 3rem; }
   .hero-desc { margin-left: auto; margin-right: auto; }
   .hero-btns { justify-content: center; }
-  .hero-visual { width: 260px; height: 260px; }
-  .hero-tyre { width: 220px; height: 220px; }
-  .tyre-glow-ring { width: 220px; height: 220px; }
+  .hero-eyebrow { justify-content: center; }
+  .hero-visual { width: 300px; height: 300px; }
 
   .hero-stats { flex-direction: column; gap: 1.5rem; }
   .stat-sep { width: 60px; height: 1px; }

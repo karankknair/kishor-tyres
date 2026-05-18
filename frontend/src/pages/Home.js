@@ -101,94 +101,121 @@ const TyreSVG = ({ className = '' }) => {
   );
 };
 
-// ── SVG Remoulding Animation ──────────────────────────────────────────────────
-// Retreading: stitcher roller pastes rubber strip onto buffed carcass.
-// Uses stroke-dashoffset (NOT stroke-dasharray) animation — far more reliable.
-// Circumference r=100.5 ≈ 632; r=113.5 ≈ 713.
-// strokeDasharray is set as an SVG attribute so browsers see the initial value.
+// ── Retreading Scene ──────────────────────────────────────────────────────────
+// Dark industrial hero: tyre carcass rotates, amber lugs stamp in progressively,
+// a mould press bounces at the contact point, golden steam rises.
 
-const RemouldinAnimationSVG = ({ className = '' }) => {
-  const cx = 120, cy = 120;
+const RetreadingScene = () => {
+  const CX = 160, CY = 174;
 
-  const buffLines = Array.from({ length: 36 }, (_, i) => {
-    const a = (i * 10) * Math.PI / 180;
+  const lugs = Array.from({ length: 14 }, (_, i) => {
+    const base = (i * (360 / 14) - 90) * Math.PI / 180;
+    const skew = 5 * Math.PI / 180;
+    const r1 = 104, r2 = 118;
+    const wa = 7 * Math.PI / 180;
     return {
-      x1: cx + 88 * Math.cos(a), y1: cy + 88 * Math.sin(a),
-      x2: cx + 113 * Math.cos(a), y2: cy + 113 * Math.sin(a),
+      pts: [
+        `${(CX + r1 * Math.cos(base - wa)).toFixed(2)},${(CY + r1 * Math.sin(base - wa)).toFixed(2)}`,
+        `${(CX + r2 * Math.cos(base - wa + skew)).toFixed(2)},${(CY + r2 * Math.sin(base - wa + skew)).toFixed(2)}`,
+        `${(CX + r2 * Math.cos(base + wa + skew)).toFixed(2)},${(CY + r2 * Math.sin(base + wa + skew)).toFixed(2)}`,
+        `${(CX + r1 * Math.cos(base + wa)).toFixed(2)},${(CY + r1 * Math.sin(base + wa)).toFixed(2)}`,
+      ].join(' '),
+      delay: (i * 0.15).toFixed(2),
     };
   });
 
   return (
-    <svg className={className} viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Tyre body */}
-      <circle cx={cx} cy={cy} r="116" fill="#1A1A1A" />
+    <div className="retreading-scene">
+      <div className="scene-ambient" />
+      <svg className="scene-svg" viewBox="0 0 320 320" fill="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="lugGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#F5A623" />
+            <stop offset="100%" stopColor="#9A5000" />
+          </linearGradient>
+        </defs>
 
-      {/* Bare buffed tread zone */}
-      <circle cx={cx} cy={cy} r="100.5" fill="none" stroke="#2A2A2A" strokeWidth="27" />
+        {/* ── Layer 1: Tyre carcass — rotates slowly ── */}
+        <g className="tyre-carcass">
+          <circle cx={CX} cy={CY} r="118" fill="#141414" />
+          <circle cx={CX} cy={CY} r="118" fill="none" stroke="#1E1E1E" strokeWidth="8" />
+          {/* Buffed tread zone */}
+          <circle cx={CX} cy={CY} r="111" fill="none" stroke="#1A1A1A" strokeWidth="14" />
+          <circle cx={CX} cy={CY} r="103.5" fill="none" stroke="#2D2D2D" strokeWidth="0.8" />
+          <circle cx={CX} cy={CY} r="118"   fill="none" stroke="#2D2D2D" strokeWidth="0.8" />
+          {/* Buffed scratch texture */}
+          {Array.from({ length: 44 }, (_, i) => {
+            const a = (i * (360 / 44)) * Math.PI / 180;
+            return (
+              <line key={i}
+                x1={(CX + 105 * Math.cos(a)).toFixed(1)} y1={(CY + 105 * Math.sin(a)).toFixed(1)}
+                x2={(CX + 117 * Math.cos(a)).toFixed(1)} y2={(CY + 117 * Math.sin(a)).toFixed(1)}
+                stroke="#262626" strokeWidth="1"
+              />
+            );
+          })}
+          {/* Sidewall */}
+          <circle cx={CX} cy={CY} r="98" fill="#0F0F0F" stroke="#1D1D1D" strokeWidth="2" />
+          {/* Rim seating */}
+          <circle cx={CX} cy={CY} r="74" fill="#0D0D0D" stroke="#222" strokeWidth="1.5" />
+          {/* Sidewall text — invisible guide path + text */}
+          <path id="swPath"
+            d={`M ${CX},${CY} m -91,0 a 91,91 0 1,1 182,0 a 91,91 0 1,1 -182,0`}
+            visibility="hidden"
+          />
+          <text className="sidewall-text">
+            <textPath href="#swPath" startOffset="12%">
+              KISHOR TYRE REMOULDING WORKS • PANDHARPUR •
+            </textPath>
+          </text>
+          {/* ── Layer 2: Tread lugs — stamp in with stagger ── */}
+          {lugs.map((lug, i) => (
+            <polygon
+              key={i}
+              points={lug.pts}
+              fill="url(#lugGrad)"
+              className="tread-lug"
+              style={{ animationDelay: `${lug.delay}s` }}
+            />
+          ))}
+        </g>
 
-      {/* Buffed surface scratch lines — fade out as rubber covers them */}
-      {buffLines.map((l, i) => (
-        <line key={i} x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2}
-          stroke="#404040" strokeWidth="1" className="buff-line" />
-      ))}
+        {/* ── Layer 3: Press / mould — fixed, bounces at top ── */}
+        <g className="press-element">
+          <rect x="88" y="4" width="144" height="48" rx="6" fill="#222" stroke="#383838" strokeWidth="1.5" />
+          {Array.from({ length: 8 }, (_, i) => (
+            <line key={i}
+              x1={98 + i * 16} y1="4" x2={98 + i * 16} y2="52"
+              stroke="#2E2E2E" strokeWidth="1"
+            />
+          ))}
+          <rect x="88"  y="46" width="144" height="12" rx="2" fill="#1C1C1C" stroke="#3A3A3A" strokeWidth="1" />
+          {/* Heating element glow */}
+          <rect x="92"  y="50" width="136" height="6"  rx="2" fill="#F5A623" className="press-heat" />
+          <rect x="82"  y="42" width="8"   height="18" rx="3" fill="#333" stroke="#444" strokeWidth="1" />
+          <rect x="230" y="42" width="8"   height="18" rx="3" fill="#333" stroke="#444" strokeWidth="1" />
+        </g>
 
-      {/* Rubber compound — grows clockwise; dashoffset 632→0 reveals the arc */}
-      <circle cx={cx} cy={cy} r="100.5" fill="none"
-        stroke="#A05A00" strokeWidth="27"
-        strokeDasharray="632 9999"
-        className="rubber-fill" />
-
-      {/* Freshly-applied rubber sheen on outer edge */}
-      <circle cx={cx} cy={cy} r="113.5" fill="none"
-        stroke="#C07800" strokeWidth="4"
-        strokeDasharray="713 9999"
-        className="rubber-sheen" />
-
-      {/* Stitcher roller group — stays locked to the leading edge of the fill */}
-      <g className="stitcher-group">
-        {/* Rubber strip feeding from outside */}
-        <line x1={cx + 126} y1={cy} x2={cx + 116} y2={cy}
-          stroke="#A05A00" strokeWidth="8" strokeLinecap="round" />
-        {/* Roller body */}
-        <circle cx={cx + 116} cy={cy} r="7" fill="#555" stroke="#999" strokeWidth="1.5" />
-        <circle cx={cx + 116} cy={cy} r="2.5" fill="#2A2A2A" />
-        {/* Pressure contact glow */}
-        <circle cx={cx + 116} cy={cy} r="10" fill="none"
-          stroke="#F5A623" strokeWidth="1.5" className="stitcher-glow" />
-      </g>
-
-      {/* Sidewall */}
-      <circle cx={cx} cy={cy} r="83" fill="#111111" />
-      <circle cx={cx} cy={cy} r="83" fill="none" stroke="#1E1E1E" strokeWidth="3" />
-
-      {/* Rim outer ring */}
-      <circle cx={cx} cy={cy} r="72" fill="#181818" stroke="#F5A623" strokeWidth="2.5" />
-      <circle cx={cx} cy={cy} r="50" fill="none" stroke="#2A2A2A" strokeWidth="1" />
-
-      {/* 5 spokes */}
-      {Array.from({ length: 5 }, (_, i) => {
-        const a = (i * 72 - 90) * Math.PI / 180;
-        const x1 = cx + 25 * Math.cos(a), y1 = cy + 25 * Math.sin(a);
-        const x2 = cx + 68 * Math.cos(a), y2 = cy + 68 * Math.sin(a);
-        return (
-          <g key={i}>
-            <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#F5A623" strokeWidth="12" strokeLinecap="round" />
-            <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#FFD166" strokeWidth="3" strokeLinecap="round" opacity="0.35" />
-          </g>
-        );
-      })}
-
-      {/* Hub */}
-      <circle cx={cx} cy={cy} r="23" fill="#111" stroke="#F5A623" strokeWidth="2.5" />
-      <circle cx={cx} cy={cy} r="13" fill="#F5A623" />
-      <circle cx={cx} cy={cy} r="5" fill="#111" />
-
-      {/* 5 hub bolts */}
-      {Array.from({ length: 5 }, (_, i) => {
-        const a = (i * 72 - 90) * Math.PI / 180;
-        return <circle key={i} cx={cx + 18 * Math.cos(a)} cy={cy + 18 * Math.sin(a)} r="2.2" fill="#0D0D0D" />;
-      })}
-    </svg>
+        {/* ── Layer 4: Steam wisps — rise from press contact ── */}
+        {[
+          { x: CX - 16, delay: 0 },
+          { x: CX - 4,  delay: 0.55 },
+          { x: CX + 10, delay: 1.1 },
+          { x: CX + 22, delay: 1.65 },
+        ].map((s, i) => (
+          <path
+            key={i}
+            d={`M ${s.x} 56 Q ${s.x + 7} 38, ${s.x - 2} 22 Q ${s.x - 8} 8, ${s.x + 4} -2`}
+            fill="none"
+            stroke="rgba(245,166,35,0.4)"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+            className="steam-wisp"
+            style={{ animationDelay: `${s.delay}s` }}
+          />
+        ))}
+      </svg>
+    </div>
   );
 };
 
@@ -293,15 +320,21 @@ const HeroSection = ({ companyInfo }) => {
 
   return (
     <section className="hero-section">
-      <div className="tread-bar"><div className="tread-track" /></div>
+      <div className="tread-bar">
+        <div className="tread-track tread-fwd" />
+        <div className="tread-track tread-rev" />
+      </div>
 
       <div className="hero-inner">
         <div className="hero-text">
-          <p className="hero-eyebrow">Est. {companyInfo?.established_year || 1995} — Pandharpur, Maharashtra</p>
+          <p className="hero-eyebrow">
+            <span className="live-dot" aria-hidden="true" />
+            Est. {companyInfo?.established_year || 1995} — Pandharpur, Maharashtra
+          </p>
           <h1 className="hero-headline">
-            KISHOR TYRE<br />
-            <span className="gold">REMOULDING</span><br />
-            WORKS
+            <span className="headline-word">KISHOR TYRE</span><br />
+            <span className="headline-word gold headline-remoulding" style={{ animationDelay: '0.08s' }}>REMOULDING</span><br />
+            <span className="headline-word" style={{ animationDelay: '0.16s' }}>WORKS</span>
           </h1>
           <p className="hero-sub">360° Tyre Care Solutions</p>
           <p className="hero-desc">
@@ -315,8 +348,7 @@ const HeroSection = ({ companyInfo }) => {
         </div>
 
         <div className="hero-visual">
-          <div className="tyre-glow-ring" />
-          <RemouldinAnimationSVG className="hero-tyre" />
+          <RetreadingScene />
         </div>
       </div>
 
@@ -324,16 +356,19 @@ const HeroSection = ({ companyInfo }) => {
         <div className="stat-card">
           <span className="stat-num">{c1}+</span>
           <span className="stat-lbl">Years Experience</span>
+          <div className={`stat-bar${statsInView ? ' fill' : ''}`} />
         </div>
         <div className="stat-sep" />
         <div className="stat-card">
           <span className="stat-num">{c2 >= 10000 ? '10,000' : c2.toLocaleString()}+</span>
           <span className="stat-lbl">Tyres Remoulded</span>
+          <div className={`stat-bar${statsInView ? ' fill' : ''}`} />
         </div>
         <div className="stat-sep" />
         <div className="stat-card">
           <span className="stat-num">{c3}+</span>
           <span className="stat-lbl">Satisfied Clients</span>
+          <div className={`stat-bar${statsInView ? ' fill' : ''}`} />
         </div>
       </div>
     </section>
