@@ -101,6 +101,98 @@ const TyreSVG = ({ className = '' }) => {
   );
 };
 
+// ── SVG Remoulding Animation ──────────────────────────────────────────────────
+
+const RemouldinAnimationSVG = ({ className = '' }) => {
+  const cx = 120, cy = 120;
+  const numTread = 20;
+
+  const treads = Array.from({ length: numTread }, (_, i) => {
+    const base = (i * (360 / numTread)) * Math.PI / 180;
+    const skew = 4 * Math.PI / 180;
+    const r1 = 87, r2 = 113;
+    const wa = 7.5 * Math.PI / 180;
+    const pts = [
+      `${cx + r1 * Math.cos(base - wa)},${cy + r1 * Math.sin(base - wa)}`,
+      `${cx + r2 * Math.cos(base - wa + skew)},${cy + r2 * Math.sin(base - wa + skew)}`,
+      `${cx + r2 * Math.cos(base + wa + skew)},${cy + r2 * Math.sin(base + wa + skew)}`,
+      `${cx + r1 * Math.cos(base + wa)},${cy + r1 * Math.sin(base + wa)}`,
+    ].join(' ');
+    return { pts, delay: (i * (4 / numTread)).toFixed(2) };
+  });
+
+  return (
+    <svg className={className} viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Outer heat glow ring */}
+      <circle cx={cx} cy={cy} r="118" fill="none" stroke="#F5A623" strokeWidth="3" className="remould-outer-glow" />
+
+      {/* Tyre body */}
+      <circle cx={cx} cy={cy} r="116" fill="#1A1A1A" />
+
+      {/* Raw rubber compound band */}
+      <circle cx={cx} cy={cy} r="100" fill="none" stroke="#1D1D1D" strokeWidth="26" />
+
+      {/* Rotating press group */}
+      <g className="press-group">
+        {/* Main press arc */}
+        <circle cx={cx} cy={cy} r="102" fill="none" stroke="#F5A623" strokeWidth="4"
+                strokeDasharray="55 586" />
+        {/* Press glow diffuse */}
+        <circle cx={cx} cy={cy} r="102" fill="none" stroke="#F5A623" strokeWidth="14"
+                strokeDasharray="30 611" opacity="0.2" />
+        {/* Heat shimmer lines at press contact point */}
+        <line x1={cx + 88} y1={cy} x2={cx + 96} y2={cy} stroke="#FFD166" strokeWidth="2" opacity="0.85" />
+        <line x1={cx + 110} y1={cy} x2={cx + 119} y2={cy} stroke="#FF8C00" strokeWidth="1.5" opacity="0.6" />
+      </g>
+
+      {/* Tread blocks — flash gold as the press passes */}
+      {treads.map((t, i) => (
+        <polygon
+          key={i}
+          points={t.pts}
+          fill="#272727"
+          stroke="#111"
+          strokeWidth="0.8"
+          className="tread-stamp"
+          style={{ animationDelay: `-${t.delay}s` }}
+        />
+      ))}
+
+      {/* Sidewall */}
+      <circle cx={cx} cy={cy} r="83" fill="#111111" />
+      <circle cx={cx} cy={cy} r="83" fill="none" stroke="#1E1E1E" strokeWidth="3" />
+
+      {/* Rim outer ring */}
+      <circle cx={cx} cy={cy} r="72" fill="#181818" stroke="#F5A623" strokeWidth="2.5" />
+      <circle cx={cx} cy={cy} r="50" fill="none" stroke="#2A2A2A" strokeWidth="1" />
+
+      {/* 5 spokes */}
+      {Array.from({ length: 5 }, (_, i) => {
+        const a = (i * 72 - 90) * Math.PI / 180;
+        const x1 = cx + 25 * Math.cos(a), y1 = cy + 25 * Math.sin(a);
+        const x2 = cx + 68 * Math.cos(a), y2 = cy + 68 * Math.sin(a);
+        return (
+          <g key={i}>
+            <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#F5A623" strokeWidth="12" strokeLinecap="round" />
+            <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#FFD166" strokeWidth="3" strokeLinecap="round" opacity="0.35" />
+          </g>
+        );
+      })}
+
+      {/* Hub */}
+      <circle cx={cx} cy={cy} r="23" fill="#111" stroke="#F5A623" strokeWidth="2.5" />
+      <circle cx={cx} cy={cy} r="13" fill="#F5A623" />
+      <circle cx={cx} cy={cy} r="5" fill="#111" />
+
+      {/* 5 hub bolts */}
+      {Array.from({ length: 5 }, (_, i) => {
+        const a = (i * 72 - 90) * Math.PI / 180;
+        return <circle key={i} cx={cx + 18 * Math.cos(a)} cy={cy + 18 * Math.sin(a)} r="2.2" fill="#0D0D0D" />;
+      })}
+    </svg>
+  );
+};
+
 // ── Header ────────────────────────────────────────────────────────────────────
 
 const Header = ({ user }) => {
@@ -225,7 +317,7 @@ const HeroSection = ({ companyInfo }) => {
 
         <div className="hero-visual">
           <div className="tyre-glow-ring" />
-          <TyreSVG className="hero-tyre spin" />
+          <RemouldinAnimationSVG className="hero-tyre" />
         </div>
       </div>
 
