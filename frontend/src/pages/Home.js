@@ -48,55 +48,21 @@ const HeroTyre = () => (
   <div className="hero-tyre-wrapper">
     <svg
       viewBox="0 0 300 300"
-      width="280"
-      height="280"
+      width="260"
+      height="260"
       className="hero-tyre-svg"
       style={{ animation: 'heroTyreSpin 10s linear infinite' }}
     >
-      {/* Tyre body */}
-      <circle cx="150" cy="150" r="140" fill="#111111" />
-
-      {/* 20 outer tread blocks */}
-      {Array.from({ length: 20 }).map((_, i) => {
-        const angle = (i * 360) / 20;
-        const rad = (angle * Math.PI) / 180;
-        const x = 150 + 128 * Math.cos(rad);
-        const y = 150 + 128 * Math.sin(rad);
-        return (
-          <rect
-            key={i}
-            x="-11" y="-8" width="22" height="16" rx="3"
-            fill={i % 4 === 0 ? '#F5A800' : '#2A2A2A'}
-            stroke="#111" strokeWidth="1.5"
-            transform={`translate(${x}, ${y}) rotate(${angle + 90})`}
-          />
-        );
-      })}
-
-      {/* Outer groove ring */}
-      <circle cx="150" cy="150" r="112" fill="none" stroke="#111111" strokeWidth="4" />
-
-      {/* 16 middle tread blocks */}
-      {Array.from({ length: 16 }).map((_, i) => {
-        const angle = (i * 360) / 16 + 11.25;
-        const rad = (angle * Math.PI) / 180;
-        const x = 150 + 96 * Math.cos(rad);
-        const y = 150 + 96 * Math.sin(rad);
-        return (
-          <rect
-            key={i}
-            x="-7" y="-5" width="14" height="10" rx="2"
-            fill={i % 2 === 0 ? '#C88A00' : '#1A1A1A'}
-            stroke="#111" strokeWidth="1"
-            transform={`translate(${x}, ${y}) rotate(${angle + 90})`}
-          />
-        );
-      })}
-
-      {/* Inner tyre wall — solid rubber, no spokes */}
-      <circle cx="150" cy="150" r="74" fill="#1A1A1A" />
-      <circle cx="150" cy="150" r="60" fill="none" stroke="#333333" strokeWidth="3" />
-      <circle cx="150" cy="150" r="52" fill="#111111" stroke="#2A2A2A" strokeWidth="2" />
+      {/* Outer dashed ring — mirrors the logo */}
+      <circle cx="150" cy="150" r="140" fill="none" stroke="#F5A800" strokeWidth="3" strokeDasharray="14 8"/>
+      {/* Tyre body — thick amber ring like the logo */}
+      <circle cx="150" cy="150" r="116" fill="none" stroke="#F5A800" strokeWidth="46"/>
+      {/* Tread grooves — three circumferential dark circles */}
+      <circle cx="150" cy="150" r="100" fill="none" stroke="rgba(0,0,0,0.28)" strokeWidth="2"/>
+      <circle cx="150" cy="150" r="116" fill="none" stroke="rgba(0,0,0,0.28)" strokeWidth="2"/>
+      <circle cx="150" cy="150" r="132" fill="none" stroke="rgba(0,0,0,0.28)" strokeWidth="2"/>
+      {/* Inner hub ring — mirrors the logo */}
+      <circle cx="150" cy="150" r="53" fill="none" stroke="#F5A800" strokeWidth="3"/>
     </svg>
   </div>
 );

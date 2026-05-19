@@ -1,4 +1,4 @@
-.tyre-sizes-page { min-height: 100vh; background: #F5A800; font-family: 'Inter', 'Poppins', sans-serif; color: #111111; }
+.tyre-sizes-page { min-height: 100vh; background: #FFFFFF; font-family: 'Inter', 'Poppins', sans-serif; color: #111111; }
 
 .breadcrumb-nav {
   padding: 12px 40px;
@@ -33,12 +33,7 @@
 .sizes-hero h1 { font-family: 'Bebas Neue', 'Oswald', sans-serif; font-size: clamp(2.5rem, 5vw, 4rem); letter-spacing: 4px; color: #FFFFFF; margin: 0 0 12px; line-height: 1; }
 .sizes-hero p { font-size: 1.05rem; color: #888; max-width: 600px; margin: 0 auto; line-height: 1.6; }
 
-.loading-state {
-  text-align: center;
-  padding: 80px;
-  color: #3A2800;
-  font-size: 18px;
-}
+.loading-state { text-align: center; padding: 80px; color: #555; font-size: 18px; }
 
 .sizes-layout {
   display: flex;
@@ -52,21 +47,15 @@
 .category-sidebar {
   width: 220px;
   flex-shrink: 0;
-  background: #FFB800;
+  background: #FFFFFF;
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-  border: 1px solid #C88A00;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  border: 1px solid #EEEEEE;
   position: sticky;
   top: 20px;
 }
-.category-sidebar h3 {
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #3A2800;
-  margin-bottom: 14px;
-}
+.category-sidebar h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 14px; }
 
 .category-btn {
   width: 100%;
@@ -80,23 +69,23 @@
   cursor: pointer;
   text-align: left;
   font-size: 14px;
-  color: #111111;
+  color: #444;
   margin-bottom: 4px;
   transition: background 0.15s;
 }
-.category-btn:hover { background: rgba(0,0,0,0.08); }
-.category-btn.active { background: #111111; color: #F5A800; font-weight: 600; }
+.category-btn:hover { background: rgba(245,168,0,0.07); }
+.category-btn.active { background: #F5A800; color: #111111; font-weight: 600; }
 .cat-icon { font-size: 18px; }
 .cat-name { flex: 1; }
 .cat-count {
-  background: rgba(0,0,0,0.12);
-  color: #3A2800;
+  background: #EEEEEE;
+  color: #666;
   font-size: 11px;
   padding: 2px 7px;
   border-radius: 99px;
   font-weight: 600;
 }
-.category-btn.active .cat-count { background: rgba(245,168,0,0.3); color: #F5A800; }
+.category-btn.active .cat-count { background: rgba(0,0,0,0.15); color: #111111; }
 
 .sizes-content { flex: 1; }
 
@@ -112,16 +101,16 @@
 
 .size-search {
   padding: 8px 14px;
-  border: 1px solid #C88A00;
+  border: 1px solid #CCCCCC;
   border-radius: 8px;
-  background: rgba(255,255,255,0.2);
+  background: #FFFFFF;
   font-size: 14px;
   outline: none;
   width: 200px;
   color: #111111;
 }
-.size-search:focus { border-color: #111111; }
-.size-search::placeholder { color: #3A2800; }
+.size-search:focus { border-color: #F5A800; }
+.size-search::placeholder { color: #999; }
 
 .sizes-grid {
   display: grid;
@@ -131,18 +120,18 @@
 }
 
 .size-card {
-  background: #FFB800;
+  background: #FFFFFF;
   border-radius: 10px;
   padding: 20px 16px;
   text-align: center;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.08);
-  border: 1px solid #C88A00;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  border: 1px solid #EEEEEE;
   transition: box-shadow 0.15s, border-color 0.15s;
 }
-.size-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.15); border-color: #111111; }
+.size-card:hover { box-shadow: 0 4px 16px rgba(245,168,0,0.18); border-color: #F5A800; }
 
 .size-display { font-size: 16px; font-weight: 700; color: #111111; }
-.size-description { font-size: 12px; color: #3A2800; margin: 6px 0 0; }
+.size-description { font-size: 12px; color: #666; margin: 6px 0 0; }
 .size-status {
   margin-top: 10px;
   display: inline-block;
@@ -151,21 +140,22 @@
   border-radius: 99px;
   font-weight: 600;
 }
-.size-status.active { background: #111111; color: #F5A800; }
+.size-status.active { background: #F5A800; color: #111111; }
 
-.no-results { color: #3A2800; font-style: italic; }
+.no-results { color: #999; font-style: italic; }
 
 .sizes-note {
   font-size: 13px;
-  color: #3A2800;
+  color: #555;
   padding: 14px 16px;
-  background: rgba(0,0,0,0.08);
+  background: rgba(245,168,0,0.06);
   border-radius: 8px;
   display: flex;
   align-items: center;
   gap: 8px;
+  border: 1px solid rgba(245,168,0,0.2);
 }
-.sizes-note a { color: #111111; font-weight: 600; text-decoration: none; }
+.sizes-note a { color: #F5A800; font-weight: 600; text-decoration: none; }
 
 .sizes-cta {
   background: #111111;
