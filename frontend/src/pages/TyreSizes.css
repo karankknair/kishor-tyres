@@ -176,6 +176,21 @@
 }
 .btn-primary:hover { background: #D4860A; }
 
+/* ── Dark Mode ─────────────────────────────────────────────────────────────────── */
+
+[data-theme="dark"] .tyre-sizes-page { background: #0D0D0D; }
+[data-theme="dark"] .category-sidebar { background: #1A1A1A; border-color: #2A2A2A; }
+[data-theme="dark"] .category-sidebar h3 { color: #666666; }
+[data-theme="dark"] .category-btn { color: #999999; }
+[data-theme="dark"] .category-btn:hover { background: rgba(245,168,0,0.1); }
+[data-theme="dark"] .size-card { background: #1A1A1A; border-color: #2A2A2A; }
+[data-theme="dark"] .size-display { color: #FFFFFF; }
+[data-theme="dark"] .size-description { color: #888888; }
+[data-theme="dark"] .sizes-content-header h2 { color: #FFFFFF; }
+[data-theme="dark"] .size-search { background: #1A1A1A; border-color: #333333; color: #FFFFFF; }
+[data-theme="dark"] .size-search::placeholder { color: #555555; }
+[data-theme="dark"] .sizes-note { background: rgba(245,168,0,0.05); border-color: rgba(245,168,0,0.15); color: #888888; }
+
 @media (max-width: 768px) {
   .sizes-layout { flex-direction: column; padding: 0 20px; }
   .category-sidebar { width: 100%; position: static; }

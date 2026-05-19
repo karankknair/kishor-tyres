@@ -53,16 +53,21 @@ const HeroTyre = () => (
       className="hero-tyre-svg"
       style={{ animation: 'heroTyreSpin 10s linear infinite' }}
     >
-      {/* Outer dashed ring — amber accent */}
-      <circle cx="150" cy="150" r="140" fill="none" stroke="#F5A800" strokeWidth="3" strokeDasharray="14 8"/>
-      {/* Tyre body — BLACK like a real tyre */}
-      <circle cx="150" cy="150" r="116" fill="none" stroke="#111111" strokeWidth="46"/>
-      {/* Tread grooves — amber lines visible on black */}
-      <circle cx="150" cy="150" r="100" fill="none" stroke="#F5A800" strokeWidth="1.8" opacity="0.75"/>
-      <circle cx="150" cy="150" r="116" fill="none" stroke="#F5A800" strokeWidth="1.8" opacity="0.75"/>
-      <circle cx="150" cy="150" r="132" fill="none" stroke="#F5A800" strokeWidth="1.8" opacity="0.75"/>
-      {/* Inner hub ring — amber */}
-      <circle cx="150" cy="150" r="53" fill="none" stroke="#F5A800" strokeWidth="3"/>
+      {/* Outer dashed ring */}
+      <circle cx="150" cy="150" r="142" fill="none" stroke="#F5A800" strokeWidth="2.5" strokeDasharray="12 7"/>
+      {/* Tyre body — solid filled black */}
+      <circle cx="150" cy="150" r="134" fill="#111111"/>
+      {/* Tread grooves */}
+      <circle cx="150" cy="150" r="120" fill="none" stroke="#F5A800" strokeWidth="1.5" opacity="0.5"/>
+      <circle cx="150" cy="150" r="108" fill="none" stroke="#F5A800" strokeWidth="1.5" opacity="0.5"/>
+      {/* Bead line */}
+      <circle cx="150" cy="150" r="90" fill="none" stroke="#333333" strokeWidth="1.5"/>
+      {/* Rim area — dark fill */}
+      <circle cx="150" cy="150" r="78" fill="#1C1C1C"/>
+      {/* Rim amber accent ring */}
+      <circle cx="150" cy="150" r="78" fill="none" stroke="#F5A800" strokeWidth="2.5"/>
+      {/* Center hub cap */}
+      <circle cx="150" cy="150" r="20" fill="#F5A800" opacity="0.55"/>
     </svg>
   </div>
 );
@@ -87,7 +92,7 @@ const LoadingScreen = ({ onDone }) => (
 
 // ── Header ────────────────────────────────────────────────────────────────────
 
-const Header = ({ user, lang, setLang }) => {
+const Header = ({ user, lang, setLang, darkMode, setDarkMode }) => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const tr = t[lang];
@@ -117,6 +122,13 @@ const Header = ({ user, lang, setLang }) => {
         </nav>
 
         <div className="header-right">
+          <button
+            className="theme-toggle"
+            onClick={() => setDarkMode(d => !d)}
+            aria-label="Toggle dark mode"
+          >
+            {darkMode ? '☀️' : '🌙'}
+          </button>
           <button
             className="lang-toggle"
             onClick={() => setLang(lang === 'en' ? 'mr' : 'en')}
@@ -548,8 +560,14 @@ const Home = () => {
   const [gallery, setGallery] = useState([]);
   const [showLoader, setShowLoader] = useState(true);
   const [lang, setLang] = useState(() => localStorage.getItem('lang') || 'en');
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
 
   useEffect(() => { localStorage.setItem('lang', lang); }, [lang]);
+
+  useEffect(() => {
+    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
 
   useEffect(() => {
     Promise.all([
@@ -571,7 +589,7 @@ const Home = () => {
 
   return (
     <div className={`home-page${lang === 'mr' ? ' marathi' : ''}`}>
-      <Header user={user} lang={lang} setLang={setLang} />
+      <Header user={user} lang={lang} setLang={setLang} darkMode={darkMode} setDarkMode={setDarkMode} />
       <HeroSection companyInfo={companyInfo} lang={lang} />
       <WhySection />
       <TyreSizesSection lang={lang} />

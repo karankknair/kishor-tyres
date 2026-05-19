@@ -146,6 +146,20 @@
 }
 .btn-primary:hover { background: #D4860A; }
 
+/* ── Dark Mode ─────────────────────────────────────────────────────────────────── */
+
+[data-theme="dark"] .feedback-page { background: #0D0D0D; }
+[data-theme="dark"] .rating-summary { background: #1A1A1A; border-color: #2A2A2A; }
+[data-theme="dark"] .avg-number { color: #FFFFFF; }
+[data-theme="dark"] .review-count { color: #888888; }
+[data-theme="dark"] .bar-track { background: #2A2A2A; }
+[data-theme="dark"] .testimonial-card { background: #1A1A1A; border-left-color: #2A2A2A; }
+[data-theme="dark"] .testimonial-card.rating-5,
+[data-theme="dark"] .testimonial-card.rating-4 { border-left-color: #F5A800; }
+[data-theme="dark"] .t-meta h4 { color: #FFFFFF; }
+[data-theme="dark"] .t-content { color: #AAAAAA; }
+[data-theme="dark"] .t-date { color: #666666; }
+
 @media (max-width: 768px) {
   .feedback-container { padding: 0 20px; }
   .testimonials-grid { grid-template-columns: 1fr; }

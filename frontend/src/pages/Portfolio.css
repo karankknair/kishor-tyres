@@ -166,6 +166,14 @@
 }
 .btn-primary:hover { background: #D4860A; }
 
+/* ── Dark Mode ─────────────────────────────────────────────────────────────────── */
+
+[data-theme="dark"] .portfolio-page { background: #0D0D0D; }
+[data-theme="dark"] .filter-btn { background: #1A1A1A; color: #888888; border-color: #2A2A2A; }
+[data-theme="dark"] .filter-btn:hover { border-color: #F5A800; color: #F5A800; }
+[data-theme="dark"] .gallery-card { background: #2A2A2A; }
+[data-theme="dark"] .placeholder-notice { background: rgba(245,168,0,0.05); border-color: rgba(245,168,0,0.15); color: #888888; }
+
 @media (max-width: 768px) {
   .portfolio-container { padding: 0 20px; }
   .gallery-masonry { columns: 2; }

@@ -277,6 +277,17 @@
 
 /* ── Responsive ──────────────────────────────────────────────────────────────── */
 
+/* ── Dark Mode ─────────────────────────────────────────────────────────────────── */
+
+[data-theme="dark"] .services-page { background: #0D0D0D; }
+[data-theme="dark"] .service-card { background: #1A1A1A; border-color: #2A2A2A; border-top-color: #F5A800; }
+[data-theme="dark"] .service-card h3 { color: #FFFFFF; }
+[data-theme="dark"] .service-desc { color: #999999; }
+[data-theme="dark"] .service-features li { color: #999999; }
+[data-theme="dark"] .services-cta-section { background: #141414; }
+[data-theme="dark"] .services-cta-section h2 { color: #FFFFFF; }
+[data-theme="dark"] .services-cta-section p { color: #888888; }
+
 @media (max-width: 768px) {
   .breadcrumb-nav { padding: 12px 20px; }
   .services-hero { padding: 56px 20px 48px; }
