@@ -44,43 +44,126 @@ const useCounter = (target, active, duration = 1800) => {
 
 // ── Hero Tyre SVG ─────────────────────────────────────────────────────────────
 
-const HeroTyre = () => (
-  <div className="hero-tyre-wrapper">
-    <svg viewBox="0 0 430 300" className="hero-tyre-svg">
-      {/* Amber glow behind tyre */}
-      <radialGradient id="tyreGlow" cx="300" cy="150" r="150" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stopColor="#F5A800" stopOpacity="0.18"/>
-        <stop offset="100%" stopColor="#F5A800" stopOpacity="0"/>
-      </radialGradient>
-      <circle cx="300" cy="150" r="155" fill="url(#tyreGlow)"/>
+const HeroTyre = () => {
+  const outerBlocks = Array.from({ length: 22 });
+  const midBlocks = Array.from({ length: 16 });
 
-      {/* Speed lines — stream left from tyre edge */}
-      <line x1="186" y1="72"  x2="8"   y2="14"  stroke="#F5A800" strokeWidth="4"   strokeLinecap="round" className="spd spd-1"/>
-      <line x1="170" y1="99"  x2="2"   y2="52"  stroke="#2A2A2A" strokeWidth="4.5" strokeLinecap="round" className="spd spd-2"/>
-      <line x1="162" y1="130" x2="4"   y2="96"  stroke="#F5A800" strokeWidth="3.5" strokeLinecap="round" className="spd spd-3"/>
-      <line x1="160" y1="158" x2="2"   y2="138" stroke="#2A2A2A" strokeWidth="4"   strokeLinecap="round" className="spd spd-4"/>
-      <line x1="165" y1="185" x2="8"   y2="172" stroke="#F5A800" strokeWidth="3"   strokeLinecap="round" className="spd spd-5"/>
-      <line x1="174" y1="208" x2="32"  y2="200" stroke="#2A2A2A" strokeWidth="2.5" strokeLinecap="round" className="spd spd-6"/>
-      <line x1="185" y1="224" x2="65"  y2="220" stroke="#F5A800" strokeWidth="2"   strokeLinecap="round" className="spd spd-7"/>
+  return (
+    <div className="hero-tyre-wrapper">
+      <svg
+        viewBox="0 0 300 300"
+        width="280"
+        height="280"
+        style={{ animation: 'heroTyreSpin 10s linear infinite', flexShrink: 0 }}
+      >
+        {/* BASE — full tyre body */}
+        <circle cx="150" cy="150" r="145" fill="#111111" />
 
-      {/* Rotating tyre group */}
-      <g className="hero-tyre-g">
-        <circle cx="300" cy="150" r="130" fill="none" stroke="#F5A800" strokeWidth="2.5" strokeDasharray="12 7"/>
-        <circle cx="300" cy="150" r="122" className="tyre-body" fill="#111111"/>
-        <circle cx="300" cy="150" r="109" fill="none" stroke="#F5A800" strokeWidth="1.5" opacity="0.5"/>
-        <circle cx="300" cy="150" r="97"  fill="none" stroke="#F5A800" strokeWidth="1.5" opacity="0.5"/>
-        <circle cx="300" cy="150" r="82"  fill="none" stroke="#2A2A2A" strokeWidth="2"/>
-        <circle cx="300" cy="150" r="68"  className="tyre-rim" fill="#1C1C1C"/>
-        <circle cx="300" cy="150" r="68"  fill="none" stroke="#F5A800" strokeWidth="2.5"/>
-        <circle cx="300" cy="150" r="20"  fill="#F5A800" opacity="0.5"/>
-      </g>
+        {/* OUTER TREAD BAND */}
+        <circle cx="150" cy="150" r="145" fill="none" stroke="#1A1A1A" strokeWidth="36" />
 
-      {/* Ground shadow */}
-      <ellipse cx="300" cy="278" rx="112" ry="5" fill="rgba(0,0,0,0.1)"/>
-      {/* Ground track — tyre tread marks */}
-      <line x1="30" y1="278" x2="420" y2="278" stroke="#F5A800" strokeWidth="2.5" strokeDasharray="10 8" opacity="0.25"/>
-    </svg>
-  </div>
+        {/* Outer tread blocks — raised lugs */}
+        {outerBlocks.map((_, i) => {
+          const angle = (i * 360) / 22;
+          const rad = (angle * Math.PI) / 180;
+          const cx = 150 + 127 * Math.cos(rad);
+          const cy = 150 + 127 * Math.sin(rad);
+          return (
+            <rect
+              key={`tread-outer-${i}`}
+              x="-14" y="-9"
+              width="28" height="18"
+              rx="3"
+              fill={i % 2 === 0 ? '#2A2A2A' : '#222222'}
+              stroke="#111111"
+              strokeWidth="2"
+              transform={`translate(${cx},${cy}) rotate(${angle + 90})`}
+            />
+          );
+        })}
+
+        {/* OUTER GROOVE — deep channel */}
+        <circle cx="150" cy="150" r="110" fill="none" stroke="#111111" strokeWidth="10" />
+
+        {/* SECONDARY TREAD BAND */}
+        {midBlocks.map((_, i) => {
+          const angle = (i * 360) / 16 + 11.25;
+          const rad = (angle * Math.PI) / 180;
+          const cx = 150 + 95 * Math.cos(rad);
+          const cy = 150 + 95 * Math.sin(rad);
+          return (
+            <rect
+              key={`tread-mid-${i}`}
+              x="-11" y="-7"
+              width="22" height="14"
+              rx="2"
+              fill={i % 2 === 0 ? '#252525' : '#1E1E1E'}
+              stroke="#111111"
+              strokeWidth="1.5"
+              transform={`translate(${cx},${cy}) rotate(${angle + 90})`}
+            />
+          );
+        })}
+
+        {/* INNER GROOVE — second deep channel */}
+        <circle cx="150" cy="150" r="80" fill="none" stroke="#111111" strokeWidth="8" />
+
+        {/* INNER TREAD BAND — finer pattern with amber accents */}
+        {Array.from({ length: 24 }).map((_, i) => {
+          const angle = (i * 360) / 24;
+          const rad = (angle * Math.PI) / 180;
+          const cx = 150 + 68 * Math.cos(rad);
+          const cy = 150 + 68 * Math.sin(rad);
+          return (
+            <rect
+              key={`tread-inner-${i}`}
+              x="-7" y="-4"
+              width="14" height="8"
+              rx="1.5"
+              fill={i % 3 === 0 ? '#F5A800' : '#1A1A1A'}
+              stroke="#111111"
+              strokeWidth="1"
+              transform={`translate(${cx},${cy}) rotate(${angle + 90})`}
+            />
+          );
+        })}
+
+        {/* BEAD / INNER WALL */}
+        <circle cx="150" cy="150" r="56" fill="#111111" stroke="#1A1A1A" strokeWidth="3" />
+        <circle cx="150" cy="150" r="46" fill="#0D0D0D" />
+        <circle cx="150" cy="150" r="43" fill="none" stroke="#F5A800" strokeWidth="1.5" />
+        <circle cx="150" cy="150" r="36" fill="#111111" />
+      </svg>
+    </div>
+  );
+};
+
+const TyreTrackMarks = () => (
+  <svg
+    viewBox="0 0 200 300"
+    width="160"
+    height="280"
+    style={{ position: 'absolute', left: '-120px', top: '50%', transform: 'translateY(-50%)' }}
+  >
+    <defs>
+      <linearGradient id="trackFade" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stopColor="white" stopOpacity="0" />
+        <stop offset="35%"  stopColor="white" stopOpacity="1" />
+        <stop offset="100%" stopColor="white" stopOpacity="0.15" />
+      </linearGradient>
+      <mask id="trackMask">
+        <rect x="0" y="0" width="200" height="300" fill="url(#trackFade)" />
+      </mask>
+    </defs>
+    <g mask="url(#trackMask)">
+      {Array.from({ length: 10 }).map((_, i) => (
+        <rect key={`l${i}`} x="20" y={i * 30} width="30" height="18" rx="3" fill="#C88A00" />
+      ))}
+      {Array.from({ length: 10 }).map((_, i) => (
+        <rect key={`r${i}`} x="72" y={i * 30 + 9} width="30" height="18" rx="3" fill="#C88A00" />
+      ))}
+    </g>
+  </svg>
 );
 
 // ── Loading Screen ────────────────────────────────────────────────────────────
@@ -204,7 +287,8 @@ const HeroSection = ({ companyInfo, lang }) => {
             <a href="#tyre-sizes" className="btn-outline">{tr.hero_cta2}</a>
           </div>
         </div>
-        <div className="hero-tyre-wrap">
+        <div className="hero-right">
+          <TyreTrackMarks />
           <HeroTyre />
         </div>
       </div>
