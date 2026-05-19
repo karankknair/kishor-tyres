@@ -53,15 +53,15 @@ const HeroTyre = () => (
       className="hero-tyre-svg"
       style={{ animation: 'heroTyreSpin 10s linear infinite' }}
     >
-      {/* Outer dashed ring — mirrors the logo */}
+      {/* Outer dashed ring — amber accent */}
       <circle cx="150" cy="150" r="140" fill="none" stroke="#F5A800" strokeWidth="3" strokeDasharray="14 8"/>
-      {/* Tyre body — thick amber ring like the logo */}
-      <circle cx="150" cy="150" r="116" fill="none" stroke="#F5A800" strokeWidth="46"/>
-      {/* Tread grooves — three circumferential dark circles */}
-      <circle cx="150" cy="150" r="100" fill="none" stroke="rgba(0,0,0,0.28)" strokeWidth="2"/>
-      <circle cx="150" cy="150" r="116" fill="none" stroke="rgba(0,0,0,0.28)" strokeWidth="2"/>
-      <circle cx="150" cy="150" r="132" fill="none" stroke="rgba(0,0,0,0.28)" strokeWidth="2"/>
-      {/* Inner hub ring — mirrors the logo */}
+      {/* Tyre body — BLACK like a real tyre */}
+      <circle cx="150" cy="150" r="116" fill="none" stroke="#111111" strokeWidth="46"/>
+      {/* Tread grooves — amber lines visible on black */}
+      <circle cx="150" cy="150" r="100" fill="none" stroke="#F5A800" strokeWidth="1.8" opacity="0.75"/>
+      <circle cx="150" cy="150" r="116" fill="none" stroke="#F5A800" strokeWidth="1.8" opacity="0.75"/>
+      <circle cx="150" cy="150" r="132" fill="none" stroke="#F5A800" strokeWidth="1.8" opacity="0.75"/>
+      {/* Inner hub ring — amber */}
       <circle cx="150" cy="150" r="53" fill="none" stroke="#F5A800" strokeWidth="3"/>
     </svg>
   </div>

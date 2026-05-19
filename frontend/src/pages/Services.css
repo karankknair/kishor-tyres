@@ -2,7 +2,7 @@
 
 .services-page {
   min-height: 100vh;
-  background: #FFFFFF;
+  background: #FFF8EE;
   font-family: 'Inter', 'Poppins', sans-serif;
   color: #111111;
 }
@@ -231,7 +231,7 @@
 .services-cta-section {
   text-align: center;
   padding: 80px 40px;
-  background: #FAFAFA;
+  background: #FFF0D0;
 }
 
 .services-cta-section h2 {

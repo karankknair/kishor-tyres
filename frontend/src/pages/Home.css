@@ -190,7 +190,7 @@
 /* ── Global ──────────────────────────────────────────────────────────────────── */
 
 .home-page {
-  background: #FFFFFF;
+  background: #FFF8EE;
   overflow-x: hidden;
   position: relative;
 }
@@ -425,7 +425,7 @@
 /* ── Hero ────────────────────────────────────────────────────────────────────── */
 
 .hero-section {
-  background: #FFFFFF;
+  background: #FFF8EE;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -478,7 +478,7 @@
 .hero-eyebrow {
   font-size: 0.8rem;
   letter-spacing: 2px;
-  color: #F5A800;
+  color: #111111;
   text-transform: uppercase;
   margin-bottom: 1rem;
   font-family: 'Inter', sans-serif;
@@ -491,7 +491,7 @@
   display: inline-block;
   width: 7px; height: 7px;
   border-radius: 50%;
-  background: #F5A800;
+  background: #111111;
   margin-right: 9px;
   flex-shrink: 0;
   animation: blink 1.6s ease-in-out infinite;
@@ -527,7 +527,7 @@
 }
 
 .badge-text {
-  color: #F5A800;
+  color: #111111;
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 1px;
@@ -536,7 +536,7 @@
 }
 
 .badge-star {
-  color: #F5A800;
+  color: #111111;
   font-size: 12px;
   opacity: 0.7;
 }
@@ -637,7 +637,7 @@
 
 /* ── Why Choose Us ───────────────────────────────────────────────────────────── */
 
-.why-section { background: #FAFAFA; }
+.why-section { background: #FFF0D0; }
 
 .features-grid {
   display: grid;
@@ -680,7 +680,7 @@
 
 /* ── Tyre Sizes ──────────────────────────────────────────────────────────────── */
 
-.sizes-section { background: #FFFFFF; }
+.sizes-section { background: #FFF8EE; }
 
 .tabs-bar {
   display: flex;
@@ -735,7 +735,7 @@
 
 /* ── Gallery ─────────────────────────────────────────────────────────────────── */
 
-.gallery-section { background: #FAFAFA; }
+.gallery-section { background: #FFF0D0; }
 
 .gallery-filters {
   display: flex;
@@ -815,7 +815,7 @@
 
 /* ── Testimonials ────────────────────────────────────────────────────────────── */
 
-.testimonials-section { background: #FFFFFF; }
+.testimonials-section { background: #FFF8EE; }
 
 .testimonial-stage { max-width: 700px; margin: 0 auto; }
 
@@ -887,7 +887,7 @@
 
 /* ── Contact ─────────────────────────────────────────────────────────────────── */
 
-.contact-section { background: #FAFAFA; }
+.contact-section { background: #FFF0D0; }
 
 .contact-grid {
   display: grid;
