@@ -44,8 +44,8 @@
 
 .hero-tyre-wrap {
   position: relative;
-  width: 340px;
-  height: 340px;
+  width: 420px;
+  height: 290px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -61,32 +61,38 @@
 
 .hero-tyre-svg {
   display: block;
-  filter: drop-shadow(0 8px 40px rgba(245,168,0,0.35));
+  width: 420px;
+  height: 293px;
+  filter: drop-shadow(0 8px 40px rgba(245,168,0,0.3));
 }
 
-.tyre-ambient {
-  position: absolute;
-  inset: -40px;
-  background: radial-gradient(ellipse at center, rgba(245,168,0,0.18) 0%, rgba(255,255,255,0) 70%);
-  pointer-events: none;
+/* ── Tyre rotation ────────────────────────────────────────────────────────────── */
+
+.hero-tyre-g {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: heroTyreSpin 8s linear infinite;
 }
 
-.glow-ring {
-  position: absolute;
-  width: 320px;
-  height: 320px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(245,168,0,0.35);
-  animation: ringPulse 2s ease-in-out infinite;
-  pointer-events: none;
+/* ── Speed lines ─────────────────────────────────────────────────────────────── */
+
+@keyframes speedStream {
+  0%   { stroke-dashoffset: 280; opacity: 0; }
+  12%  { opacity: 1; }
+  72%  { opacity: 0.88; }
+  100% { stroke-dashoffset: 0;   opacity: 0; }
 }
 
-.glow-ring-2 {
-  width: 370px;
-  height: 370px;
-  border-color: rgba(245,168,0,0.18);
-  animation-delay: 0.5s;
+.spd {
+  stroke-dasharray: 280;
+  animation: speedStream 2s ease-in-out infinite;
 }
+.spd-2 { animation-delay: 0.28s; }
+.spd-3 { animation-delay: 0.56s; }
+.spd-4 { animation-delay: 0.84s; }
+.spd-5 { animation-delay: 1.12s; }
+.spd-6 { animation-delay: 1.40s; }
+.spd-7 { animation-delay: 1.68s; }
 
 /* ── Loading ─────────────────────────────────────────────────────────────────── */
 
@@ -1055,8 +1061,8 @@
 
 @media (max-width: 1024px) {
   .hero-inner { gap: 2.5rem; padding: 100px 32px 60px; }
-  .hero-tyre-wrap { width: 240px; height: 240px; }
-  .hero-tyre-wrapper svg { width: 200px; height: 200px; }
+  .hero-tyre-wrap { width: 320px; height: 220px; }
+  .hero-tyre-svg { width: 320px; height: 223px; }
   .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
   .features-grid { grid-template-columns: repeat(2, 1fr); }
   .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
@@ -1066,6 +1072,12 @@
 
 [data-theme="dark"] .home-page { background: #0D0D0D; }
 [data-theme="dark"] .home-page::before { mix-blend-mode: screen; opacity: 0.04; }
+
+[data-theme="dark"] .tyre-body { fill: #222222; }
+[data-theme="dark"] .tyre-rim  { fill: #2A2A2A; }
+[data-theme="dark"] .spd-2,
+[data-theme="dark"] .spd-4,
+[data-theme="dark"] .spd-6 { stroke: #666666; }
 
 [data-theme="dark"] .hero-section { background: #0D0D0D; }
 [data-theme="dark"] .hero-headline { color: #FFFFFF; }

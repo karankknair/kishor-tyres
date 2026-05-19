@@ -46,28 +46,39 @@ const useCounter = (target, active, duration = 1800) => {
 
 const HeroTyre = () => (
   <div className="hero-tyre-wrapper">
-    <svg
-      viewBox="0 0 300 300"
-      width="260"
-      height="260"
-      className="hero-tyre-svg"
-      style={{ animation: 'heroTyreSpin 10s linear infinite' }}
-    >
-      {/* Outer dashed ring */}
-      <circle cx="150" cy="150" r="142" fill="none" stroke="#F5A800" strokeWidth="2.5" strokeDasharray="12 7"/>
-      {/* Tyre body — solid filled black */}
-      <circle cx="150" cy="150" r="134" fill="#111111"/>
-      {/* Tread grooves */}
-      <circle cx="150" cy="150" r="120" fill="none" stroke="#F5A800" strokeWidth="1.5" opacity="0.5"/>
-      <circle cx="150" cy="150" r="108" fill="none" stroke="#F5A800" strokeWidth="1.5" opacity="0.5"/>
-      {/* Bead line */}
-      <circle cx="150" cy="150" r="90" fill="none" stroke="#333333" strokeWidth="1.5"/>
-      {/* Rim area — dark fill */}
-      <circle cx="150" cy="150" r="78" fill="#1C1C1C"/>
-      {/* Rim amber accent ring */}
-      <circle cx="150" cy="150" r="78" fill="none" stroke="#F5A800" strokeWidth="2.5"/>
-      {/* Center hub cap */}
-      <circle cx="150" cy="150" r="20" fill="#F5A800" opacity="0.55"/>
+    <svg viewBox="0 0 430 300" className="hero-tyre-svg">
+      {/* Amber glow behind tyre */}
+      <radialGradient id="tyreGlow" cx="300" cy="150" r="150" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="#F5A800" stopOpacity="0.18"/>
+        <stop offset="100%" stopColor="#F5A800" stopOpacity="0"/>
+      </radialGradient>
+      <circle cx="300" cy="150" r="155" fill="url(#tyreGlow)"/>
+
+      {/* Speed lines — stream left from tyre edge */}
+      <line x1="186" y1="72"  x2="8"   y2="14"  stroke="#F5A800" strokeWidth="4"   strokeLinecap="round" className="spd spd-1"/>
+      <line x1="170" y1="99"  x2="2"   y2="52"  stroke="#2A2A2A" strokeWidth="4.5" strokeLinecap="round" className="spd spd-2"/>
+      <line x1="162" y1="130" x2="4"   y2="96"  stroke="#F5A800" strokeWidth="3.5" strokeLinecap="round" className="spd spd-3"/>
+      <line x1="160" y1="158" x2="2"   y2="138" stroke="#2A2A2A" strokeWidth="4"   strokeLinecap="round" className="spd spd-4"/>
+      <line x1="165" y1="185" x2="8"   y2="172" stroke="#F5A800" strokeWidth="3"   strokeLinecap="round" className="spd spd-5"/>
+      <line x1="174" y1="208" x2="32"  y2="200" stroke="#2A2A2A" strokeWidth="2.5" strokeLinecap="round" className="spd spd-6"/>
+      <line x1="185" y1="224" x2="65"  y2="220" stroke="#F5A800" strokeWidth="2"   strokeLinecap="round" className="spd spd-7"/>
+
+      {/* Rotating tyre group */}
+      <g className="hero-tyre-g">
+        <circle cx="300" cy="150" r="130" fill="none" stroke="#F5A800" strokeWidth="2.5" strokeDasharray="12 7"/>
+        <circle cx="300" cy="150" r="122" className="tyre-body" fill="#111111"/>
+        <circle cx="300" cy="150" r="109" fill="none" stroke="#F5A800" strokeWidth="1.5" opacity="0.5"/>
+        <circle cx="300" cy="150" r="97"  fill="none" stroke="#F5A800" strokeWidth="1.5" opacity="0.5"/>
+        <circle cx="300" cy="150" r="82"  fill="none" stroke="#2A2A2A" strokeWidth="2"/>
+        <circle cx="300" cy="150" r="68"  className="tyre-rim" fill="#1C1C1C"/>
+        <circle cx="300" cy="150" r="68"  fill="none" stroke="#F5A800" strokeWidth="2.5"/>
+        <circle cx="300" cy="150" r="20"  fill="#F5A800" opacity="0.5"/>
+      </g>
+
+      {/* Ground shadow */}
+      <ellipse cx="300" cy="278" rx="112" ry="5" fill="rgba(0,0,0,0.1)"/>
+      {/* Ground track — tyre tread marks */}
+      <line x1="30" y1="278" x2="420" y2="278" stroke="#F5A800" strokeWidth="2.5" strokeDasharray="10 8" opacity="0.25"/>
     </svg>
   </div>
 );
@@ -194,9 +205,6 @@ const HeroSection = ({ companyInfo, lang }) => {
           </div>
         </div>
         <div className="hero-tyre-wrap">
-          <div className="tyre-ambient" />
-          <div className="glow-ring" />
-          <div className="glow-ring glow-ring-2" />
           <HeroTyre />
         </div>
       </div>
@@ -330,7 +338,7 @@ const TyreSizesSection = ({ lang }) => {
                 </button>
               ))}
             </div>
-            <div className={`chips-wrap${inView ? ' visible' : ''}`} ref={ref}>
+            <div className={`chips-wrap${sizes.length > 0 ? ' visible' : ''}`} ref={ref}>
               {sizes.map((s, i) => (
                 <span key={i} className="size-chip">
                   {typeof s === 'object' ? s.size : s}
